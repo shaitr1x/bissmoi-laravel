@@ -21,6 +21,11 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
+        'merchant_approved',
+        'merchant_description',
+        'merchant_phone',
+        'merchant_address',
     ];
 
     /**
@@ -40,5 +45,48 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'merchant_approved' => 'boolean',
     ];
+
+    // Relations
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function cartItems()
+    {
+        return $this->hasMany(Cart::class);
+    }
+
+    // Role methods
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isMerchant()
+    {
+        return $this->role === 'merchant';
+    }
+
+    public function isClient()
+    {
+        return $this->role === 'client';
+    }
+
+    public function isApprovedMerchant()
+    {
+        return $this->role === 'merchant' && $this->merchant_approved;
+    }
 }
