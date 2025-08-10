@@ -56,7 +56,7 @@ class OrderController extends Controller
         }
 
         $total = $cartItems->sum(function($item) {
-            return $item->quantity * $item->product->getCurrentPrice();
+            return $item->quantity * $item->product->current_price;
         });
 
         return view('orders.checkout', compact('cartItems', 'total'));
@@ -82,14 +82,22 @@ class OrderController extends Controller
 
         try {
             // Créer la commande
-            $order = Order::create([
-                'user_id' => Auth::id(),
-                'total' => 0, // Sera calculé après
-                'status' => 'pending',
-                'delivery_address' => $request->delivery_address,
-                'phone' => $request->phone,
-                'notes' => $request->notes
-            ]);
+        // Déterminer le marchand (propriétaire du premier produit du panier)
+        $merchantId = null;
+        if ($cartItems->count() > 0 && $cartItems[0]->product) {
+            $merchantId = $cartItems[0]->product->user_id;
+        }
+
+        $order = Order::create([
+            'user_id' => Auth::id(),
+            'merchant_id' => $merchantId,
+            'order_number' => 'BSM-' . strtoupper(uniqid()),
+            'total_amount' => 0, // Sera calculé après
+            'status' => 'pending',
+            'notes' => $request->notes,
+            'delivery_address' => $request->delivery_address,
+            'phone' => $request->phone
+        ]);
 
             $total = 0;
 
@@ -100,7 +108,7 @@ class OrderController extends Controller
                     throw new \Exception('Produit non disponible: ' . $item->product->name);
                 }
 
-                $price = $item->product->getCurrentPrice();
+                $price = $item->product->current_price;
                 $itemTotal = $item->quantity * $price;
 
                 OrderItem::create([
@@ -118,7 +126,7 @@ class OrderController extends Controller
             }
 
             // Mettre à jour le total de la commande
-            $order->update(['total' => $total]);
+            $order->update(['total_amount' => $total]);
 
             // Vider le panier
             Cart::where('user_id', Auth::id())->delete();

@@ -12,7 +12,12 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @if(app()->environment('local'))
+            @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @else
+            <link rel="stylesheet" href="{{ asset('build/assets/app-49e025ce.css') }}">
+            <script src="{{ asset('build/assets/app-4ba226a4.js') }}" defer></script>
+        @endif
         
         <!-- Scripts additionnels -->
         @auth
@@ -42,6 +47,7 @@
                 setInterval(updateCartCount, 30000);
             </script>
         @endauth
+    </head>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
@@ -87,8 +93,13 @@
                     </div>
                 @endif
 
-                {{ $slot }}
+                @hasSection('content')
+                    @yield('content')
+                @else
+                    {{ $slot ?? '' }}
+                @endif
             </main>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     </body>
 </html>

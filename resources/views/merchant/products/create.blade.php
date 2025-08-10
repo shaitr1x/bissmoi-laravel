@@ -13,6 +13,11 @@
         </div>
     </x-slot>
 
+    @if(session('success'))
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6">
             <form action="{{ route('merchant.products.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">

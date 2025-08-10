@@ -15,11 +15,14 @@ class Review extends Model
         'rating',
         'comment',
         'approved',
+        'helpful_votes',
     ];
 
     protected $casts = [
         'approved' => 'boolean',
         'rating' => 'integer',
+        'helpful_votes' => 'integer',
+        'approved_at' => 'datetime',
     ];
 
     // Relations
@@ -37,5 +40,15 @@ class Review extends Model
     public function scopeApproved($query)
     {
         return $query->where('approved', true);
+    }
+
+    public function scopePopular($query)
+    {
+        return $query->orderByDesc('helpful_votes');
+    }
+
+    public function scopeRecent($query)
+    {
+        return $query->orderByDesc('created_at');
     }
 }

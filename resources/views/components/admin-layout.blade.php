@@ -23,8 +23,8 @@
                     <div class="flex">
                         <!-- Logo -->
                         <div class="shrink-0 flex items-center">
-                            <a href="{{ route('admin.dashboard') }}" class="text-xl font-bold text-gray-800">
-                                🛒 Bissmoi Admin
+                            <a href="{{ route('admin.dashboard') }}">
+                                <img src="{{ asset('images/logo-bissmoi.svg') }}" alt="Bissmoi" class="block h-9 w-auto" style="max-height: 48px;">
                             </a>
                         </div>
 
@@ -42,6 +42,9 @@
                             <x-nav-link :href="route('admin.merchants')" :active="request()->routeIs('admin.merchants*')">
                                 {{ __('Commerçants') }}
                             </x-nav-link>
+                               <x-nav-link :href="route('admin.merchant_verification_requests')" :active="request()->routeIs('admin.merchant_verification_requests')">
+                                   {{ __('Demandes de badge') }}
+                               </x-nav-link>
                         </div>
                     </div>
 

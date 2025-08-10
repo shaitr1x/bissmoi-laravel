@@ -1,8 +1,21 @@
-<x-app-layout>
+<x-admin-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Dashboard Admin - Bissmoi') }}
-        </h2>
+        <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+                {{ __('Dashboard Admin - Bissmoi') }}
+            </h2>
+            <div class="relative ml-4">
+                <button id="adminNotifBtn" class="relative text-gray-500 hover:text-gray-700 transition duration-150 focus:outline-none">
+                    <svg class="h-7 w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    <span id="adminNotifBadge" class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs px-1.5 py-0.5 hidden"></span>
+                </button>
+                <div id="adminNotifDropdown" class="hidden absolute right-0 mt-2 w-96 bg-white border border-gray-200 rounded shadow-lg z-50 max-h-96 overflow-y-auto">
+                    <div id="adminNotifList" class="divide-y divide-gray-100"></div>
+                </div>
+            </div>
+        </div>
     </x-slot>
 
     <div class="py-12">
@@ -86,14 +99,14 @@
                     <div class="p-6">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Dernières Commandes</h3>
                         <div class="space-y-3">
-                            @forelse($stats['recent_orders'] as $order)
+                            @forelse($recentOrders as $order)
                                 <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
                                     <div>
                                         <p class="font-medium">#{{ $order->order_number }}</p>
-                                        <p class="text-sm text-gray-600">{{ $order->user->name }}</p>
+                                        <p class="text-sm text-gray-600">{{ $order->user->shop_name ?? $order->user->name }}</p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="font-medium">{{ number_format($order->total_amount, 2) }}€</p>
+                                        <p class="font-medium">{{ number_format($order->total_amount, 2) }} FCFA</p>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $order->status === 'pending' ? 'yellow' : 'green' }}-100 text-{{ $order->status === 'pending' ? 'yellow' : 'green' }}-800">
                                             {{ ucfirst($order->status) }}
                                         </span>
@@ -111,14 +124,14 @@
                     <div class="p-6">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Produits en Attente de Validation</h3>
                         <div class="space-y-3">
-                            @forelse($stats['pending_products_list'] as $product)
+                            @forelse($pendingProducts as $product)
                                 <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
                                     <div>
                                         <p class="font-medium">{{ $product->name }}</p>
-                                        <p class="text-sm text-gray-600">par {{ $product->user->name }}</p>
+                                        <p class="text-sm text-gray-600">par {{ $product->user->shop_name ?? $product->user->name }}</p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="font-medium">{{ number_format($product->price, 2) }}€</p>
+                                        <p class="font-medium">{{ number_format($product->price, 2) }} FCFA</p>
                                         <p class="text-sm text-gray-600">{{ $product->category->name }}</p>
                                     </div>
                                 </div>
@@ -136,13 +149,26 @@
                     <div class="p-6">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Actions Rapides</h3>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <a href="{{ route('admin.categories.index') }}" class="flex items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition">
+                            <a href="{{ route('admin.merchant_verification_requests') }}" class="flex items-center p-4 bg-blue-50 hover:bg-blue-100 rounded-lg transition">
                                 <svg class="w-8 h-8 text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 17v1a3 3 0 11-6 0v-1m6 0H9m6 0V9a4 4 0 10-8 0v8m8 0a4 4 0 01-8 0" />
                                 </svg>
                                 <div>
-                                    <p class="font-medium">Gérer les Catégories</p>
-                                    <p class="text-sm text-gray-600">{{ $stats['total_categories'] }} catégories</p>
+                                    <p class="font-medium flex items-center">Demandes de badge
+                                        @php
+                                            $pendingBadgeCount = \App\Models\MerchantVerificationRequest::where('status', 'pending')->count();
+                                        @endphp
+                                        @if($pendingBadgeCount > 0)
+                                            <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold bg-red-600 text-white">{{ $pendingBadgeCount }}</span>
+                                        @endif
+                                    </p>
+                                    <p class="text-sm text-gray-600">
+                                        @if($pendingBadgeCount > 0)
+                                            {{ $pendingBadgeCount }} personne{{ $pendingBadgeCount > 1 ? 's' : '' }} en attente
+                                        @else
+                                            Aucune demande en attente
+                                        @endif
+                                    </p>
                                 </div>
                             </a>
 
@@ -171,4 +197,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-admin-layout>

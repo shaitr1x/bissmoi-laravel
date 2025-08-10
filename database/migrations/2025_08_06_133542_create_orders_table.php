@@ -18,10 +18,10 @@ return new class extends Migration
             $table->string('order_number')->unique();
             $table->unsignedBigInteger('user_id');
             $table->enum('status', ['pending', 'processing', 'shipped', 'delivered', 'cancelled'])->default('pending');
-            $table->decimal('total_amount', 10, 2);
+            $table->decimal('total_amount', 10, 2)->default(0);
             $table->decimal('tax_amount', 10, 2)->default(0);
             $table->decimal('shipping_amount', 10, 2)->default(0);
-            $table->json('billing_address');
+            $table->json('billing_address')->nullable();
             $table->json('shipping_address')->nullable();
             $table->string('payment_method')->nullable();
             $table->string('payment_status')->default('pending');

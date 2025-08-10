@@ -114,16 +114,16 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold mb-4">Commandes récentes</h3>
-                    @if($stats['recent_orders']->count() > 0)
+                    @if($recentOrders->count() > 0)
                         <div class="space-y-3">
-                            @foreach($stats['recent_orders'] as $order)
+                            @foreach($recentOrders as $order)
                                 <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
                                     <div>
                                         <p class="font-semibold">{{ $order->order_number }}</p>
                                         <p class="text-sm text-gray-600">{{ $order->user->name }}</p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="font-semibold">{{ number_format($order->total_amount, 2) }}€</p>
+                                        <p class="font-semibold">{{ number_format($order->total_amount, 2) }} FCFA</p>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-{{ $order->status === 'pending' ? 'yellow' : 'green' }}-100 text-{{ $order->status === 'pending' ? 'yellow' : 'green' }}-800">
                                             {{ ucfirst($order->status) }}
                                         </span>
@@ -141,16 +141,16 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <h3 class="text-lg font-semibold mb-4">Produits en attente de validation</h3>
-                    @if($stats['pending_products_list']->count() > 0)
+                    @if($pendingProducts->count() > 0)
                         <div class="space-y-3">
-                            @foreach($stats['pending_products_list'] as $product)
+                            @foreach($pendingProducts as $product)
                                 <div class="flex justify-between items-center p-3 bg-gray-50 rounded">
                                     <div>
                                         <p class="font-semibold">{{ $product->name }}</p>
                                         <p class="text-sm text-gray-600">{{ $product->user->name }} - {{ $product->category->name }}</p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="font-semibold">{{ number_format($product->price, 2) }}€</p>
+                                        <p class="font-semibold">{{ number_format($product->price, 2) }} FCFA</p>
                                         <a href="{{ route('admin.products.show', $product) }}" class="text-blue-600 hover:text-blue-800 text-sm">Modérer</a>
                                     </div>
                                 </div>

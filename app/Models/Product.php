@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models;
+// ...existing code...
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -8,6 +9,25 @@ use Illuminate\Support\Str;
 
 class Product extends Model
 {
+    use HasFactory;
+
+    // Mutateur pour garantir que images est toujours un array plat de strings
+    public function setImagesAttribute($value)
+    {
+        // Si c'est une string JSON, on la décode
+        if (is_string($value)) {
+            $value = json_decode($value, true) ?: [];
+        }
+        // Si c'est un array imbriqué, on l'aplatit
+        $flat = [];
+        $iterator = new \RecursiveIteratorIterator(new \RecursiveArrayIterator((array)$value));
+        foreach ($iterator as $v) {
+            if (is_string($v) && $v !== '') {
+                $flat[] = $v;
+            }
+        }
+        $this->attributes['images'] = json_encode($flat);
+    }
     use HasFactory;
 
     protected $fillable = [
@@ -89,6 +109,44 @@ class Product extends Model
     public function getReviewsCountAttribute()
     {
         return $this->reviews()->where('approved', true)->count();
+    }
+
+
+    // Obtenir l'image principale du produit
+    public function getImageAttribute()
+    {
+        $images = $this->images;
+        // S'assurer que c'est un tableau
+        if (is_string($images)) {
+            $images = json_decode($images, true);
+        }
+        // Cas champ images (array)
+        if (is_array($images) && count($images) > 0) {
+            return $images[0];
+        }
+        return null;
+    }
+
+    // Obtenir l'URL complète de l'image principale
+    public function getImageUrlAttribute()
+    {
+        if ($this->image) {
+            // Si c'est déjà un chemin complet depuis images/
+            if (str_starts_with($this->image, 'images/')) {
+                $publicPath = public_path($this->image);
+                if (file_exists($publicPath)) {
+                    return asset($this->image);
+                }
+            } else {
+                // Sinon, c'est juste un nom de fichier, on cherche dans images/products/
+                $filename = basename($this->image);
+                $publicPath = public_path('images/products/' . $filename);
+                if (file_exists($publicPath)) {
+                    return asset('images/products/' . $filename);
+                }
+            }
+        }
+        return asset('images/default-product.svg'); // Image par défaut
     }
 
     // Scopes

@@ -5,137 +5,100 @@
         </h2>
     </x-slot>
 
-    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-        <div class="p-6">
-            <div class="mb-4">
-                <div class="flex space-x-4">
-                    <div class="bg-blue-100 rounded-lg p-4 flex-1">
-                        <h3 class="text-lg font-semibold text-blue-800">Total commerçants</h3>
-                        <p class="text-2xl font-bold text-blue-600">{{ $merchants->total() }}</p>
+
+    <!-- Filtres et recherche modernisés -->
+    <form method="GET" action="" class="mb-8">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center md:gap-4">
+            <div class="relative flex-1">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Rechercher un commerçant, email ou boutique..." class="w-full border rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <button type="submit" name="status" value="" class="px-4 py-1 rounded-full border {{ request('status') == '' ? 'bg-blue-600 text-white' : 'bg-white text-gray-700' }} hover:bg-blue-50">Tous</button>
+                <button type="submit" name="status" value="approved" class="px-4 py-1 rounded-full border {{ request('status') == 'approved' ? 'bg-green-600 text-white' : 'bg-white text-gray-700' }} hover:bg-green-50">Approuvés</button>
+                <button type="submit" name="status" value="pending" class="px-4 py-1 rounded-full border {{ request('status') == 'pending' ? 'bg-yellow-500 text-white' : 'bg-white text-gray-700' }} hover:bg-yellow-50">En attente</button>
+                <button type="submit" name="verified" value="1" class="px-4 py-1 rounded-full border {{ request('verified') == '1' ? 'bg-blue-700 text-white' : 'bg-white text-gray-700' }} hover:bg-blue-100">Vérifiés</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        @forelse($merchants as $merchant)
+            <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-300 flex flex-col">
+                <div class="flex items-center gap-4 p-4 border-b">
+                    <div class="h-14 w-14 rounded-full bg-gray-200 flex items-center justify-center text-xl font-bold text-gray-600">
+                        {{ strtoupper(substr($merchant->shop_name ?? $merchant->name, 0, 2)) }}
                     </div>
-                    <div class="bg-green-100 rounded-lg p-4 flex-1">
-                        <h3 class="text-lg font-semibold text-green-800">Approuvés</h3>
-                        <p class="text-2xl font-bold text-green-600">{{ $merchants->where('merchant_approved', true)->count() }}</p>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2">
+                            <span class="font-semibold text-lg text-gray-900">{{ $merchant->shop_name ?? $merchant->name }}</span>
+                            @if($merchant->is_verified_merchant)
+                                <span title="Marchand vérifié" class="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                    <svg class="w-3 h-3 mr-1 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                                    Vérifié
+                                </span>
+                            @endif
+                        </div>
+                        <div class="text-xs text-gray-500">{{ $merchant->email }}</div>
                     </div>
-                    <div class="bg-yellow-100 rounded-lg p-4 flex-1">
-                        <h3 class="text-lg font-semibold text-yellow-800">En attente</h3>
-                        <p class="text-2xl font-bold text-yellow-600">{{ $merchants->where('merchant_approved', false)->count() }}</p>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $merchant->merchant_approved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
+                        {{ $merchant->merchant_approved ? 'Approuvé' : 'En attente' }}
+                    </span>
+                </div>
+                <div class="p-4 flex-1 flex flex-col justify-between">
+                    <div class="mb-2">
+                        <span class="text-sm text-gray-700 font-medium">{{ $merchant->products->count() }} produits</span>
+                        <span class="text-xs text-gray-500 ml-2">{{ $merchant->products->where('status', 'active')->count() }} actifs, {{ $merchant->products->where('status', 'pending')->count() }} en attente</span>
+                    </div>
+                    @if($merchant->merchant_description)
+                        <div class="text-xs text-gray-500 mb-2">{{ Str::limit($merchant->merchant_description, 60) }}</div>
+                    @endif
+                    <div class="flex flex-wrap gap-2 mt-2">
+                        @if($merchant->merchant_approved)
+                            <form action="{{ route('admin.merchants.reject', $merchant) }}" method="POST" class="inline">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="text-yellow-600 hover:text-yellow-900" onclick="return confirm('Voulez-vous révoquer l\'approbation de ce commerçant ?')">Révoquer</button>
+                            </form>
+                        @else
+                            <form action="{{ route('admin.merchants.approve', $merchant) }}" method="POST" class="inline">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="text-green-600 hover:text-green-900">Approuver</button>
+                            </form>
+                        @endif
+                        @if($merchant->is_verified_merchant)
+                            <form action="{{ route('admin.merchants.unverify', $merchant) }}" method="POST" class="inline">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="text-blue-600 hover:text-blue-900" onclick="return confirm('Retirer le badge vérifié à ce commerçant ?')">Retirer le badge</button>
+                            </form>
+                        @else
+                            <form action="{{ route('admin.merchants.verify', $merchant) }}" method="POST" class="inline">
+                                @csrf
+                                @method('PATCH')
+                                <button type="submit" class="text-blue-600 hover:text-blue-900">Vérifier (badge)</button>
+                            </form>
+                        @endif
+                        <button onclick="showMerchantDetails({{ $merchant->id }})" class="text-blue-600 hover:text-blue-900">Détails</button>
                     </div>
                 </div>
             </div>
-
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Commerçant
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Contact
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Produits
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Inscription
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Statut
-                            </th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @foreach($merchants as $merchant)
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0 h-10 w-10">
-                                            <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                                                <span class="text-sm font-medium text-gray-600">
-                                                    {{ strtoupper(substr($merchant->name, 0, 2)) }}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div class="ml-4">
-                                            <div class="text-sm font-medium text-gray-900">
-                                                {{ $merchant->name }}
-                                            </div>
-                                            @if($merchant->merchant_description)
-                                                <div class="text-sm text-gray-500">
-                                                    {{ Str::limit($merchant->merchant_description, 50) }}
-                                                </div>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">{{ $merchant->email }}</div>
-                                    @if($merchant->merchant_phone)
-                                        <div class="text-sm text-gray-500">{{ $merchant->merchant_phone }}</div>
-                                    @endif
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    <div class="flex flex-col">
-                                        <span class="font-medium">{{ $merchant->products->count() }} produits</span>
-                                        <span class="text-xs text-gray-500">
-                                            {{ $merchant->products->where('status', 'active')->count() }} actifs,
-                                            {{ $merchant->products->where('status', 'pending')->count() }} en attente
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ $merchant->created_at->format('d/m/Y') }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                        {{ $merchant->merchant_approved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                        {{ $merchant->merchant_approved ? 'Approuvé' : 'En attente' }}
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex space-x-2">
-                                        @if($merchant->merchant_approved)
-                                            <form action="{{ route('admin.merchants.reject', $merchant) }}" method="POST" class="inline">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button type="submit" class="text-yellow-600 hover:text-yellow-900" onclick="return confirm('Voulez-vous révoquer l\'approbation de ce commerçant ?')">
-                                                    Révoquer
-                                                </button>
-                                            </form>
-                                        @else
-                                            <form action="{{ route('admin.merchants.approve', $merchant) }}" method="POST" class="inline">
-                                                @csrf
-                                                @method('PATCH')
-                                                <button type="submit" class="text-green-600 hover:text-green-900">
-                                                    Approuver
-                                                </button>
-                                            </form>
-                                        @endif
-                                        
-                                        <button onclick="showMerchantDetails({{ $merchant->id }})" class="text-blue-600 hover:text-blue-900">
-                                            Détails
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="mt-4">
-                {{ $merchants->links() }}
-            </div>
-        </div>
+        @empty
+            <div class="col-span-full text-center text-gray-500 py-8">Aucun commerçant trouvé.</div>
+        @endforelse
     </div>
 
-    <!-- Modal pour les détails du commerçant -->
-    <div id="merchantModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white">
+    <div class="mt-6">
+        {{ $merchants->links() }}
+    </div>
+
+    <!-- Modal pour les détails du commerçant (unique, hors boucle) -->
+    <div id="merchantModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="relative top-20 mx-auto p-5 border w-11/12 md:w-3/4 lg:w-1/2 shadow-lg rounded-md bg-white" onclick="event.stopPropagation()">
             <div class="mt-3">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-semibold text-gray-900" id="modalTitle">Détails du commerçant</h3>
@@ -154,17 +117,16 @@
 
     <script>
         const merchants = @json($merchants->items());
-        
         function showMerchantDetails(merchantId) {
             const merchant = merchants.find(m => m.id === merchantId);
             if (!merchant) return;
-            
             document.getElementById('modalTitle').textContent = `Détails de ${merchant.name}`;
             document.getElementById('modalContent').innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <h4 class="font-semibold text-gray-700 mb-2">Informations personnelles</h4>
                         <p><strong>Nom:</strong> ${merchant.name}</p>
+                        <p><strong>Boutique:</strong> ${merchant.shop_name ? merchant.shop_name : '<span class=\'text-gray-400\'>Non renseigné</span>'}</p>
                         <p><strong>Email:</strong> ${merchant.email}</p>
                         <p><strong>Téléphone:</strong> ${merchant.merchant_phone || 'Non renseigné'}</p>
                         <p><strong>Inscription:</strong> ${new Date(merchant.created_at).toLocaleDateString('fr-FR')}</p>
@@ -200,14 +162,11 @@
                     }
                 </div>
             `;
-            
             document.getElementById('merchantModal').classList.remove('hidden');
         }
-        
         function hideMerchantDetails() {
             document.getElementById('merchantModal').classList.add('hidden');
         }
-        
         // Fermer la modal en cliquant à l'extérieur
         document.getElementById('merchantModal').addEventListener('click', function(e) {
             if (e.target === this) {

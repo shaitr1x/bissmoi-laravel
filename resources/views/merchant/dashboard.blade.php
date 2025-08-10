@@ -1,7 +1,13 @@
 <x-merchant-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Tableau de bord') }}
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight flex items-center">
+            Bissmoi Marchand
+            @if(auth()->user()->is_verified_merchant)
+                <span title="Marchand vérifié" class="inline-flex items-center ml-2 px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                    <svg class="w-4 h-4 mr-1 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                    Vérifié
+                </span>
+            @endif
         </h2>
     </x-slot>
 
@@ -105,6 +111,12 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
                     Voir les commandes
+                </a>
+                <a href="{{ route('merchant.orders.history') }}" class="inline-flex items-center px-4 py-2 bg-gray-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-800 focus:bg-gray-800 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17l4 4 4-4m0-5V3m-8 4h8"/>
+                    </svg>
+                    Historique livraisons
                 </a>
             </div>
         </div>

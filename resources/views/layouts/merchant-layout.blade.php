@@ -12,19 +12,25 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @if(app()->environment('local'))
+            @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @else
+            <link rel="stylesheet" href="{{ asset('build/assets/app-49e025ce.css') }}">
+            <script src="{{ asset('build/assets/app-4ba226a4.js') }}" defer></script>
+        @endif
     </head>
     <body class="font-sans antialiased">
+        <!-- Navigation -->
         <div class="min-h-screen bg-gray-100">
-            <!-- Navigation -->
-            <nav class="bg-blue-600 border-b border-blue-700">
+            <nav x-data="{ open: false }" class="bg-blue-600 border-b border-blue-700">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="flex justify-between h-16">
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center">
-                                <a href="{{ route('merchant.dashboard') }}" class="text-white text-xl font-bold">
-                                    {{ config('app.name', 'Laravel') }} - Marchand
+                                <a href="{{ route('merchant.dashboard') }}" class="flex items-center">
+                                    <img src="{{ asset('images/logo-bissmoi.svg') }}" alt="BISSMOI" class="h-10 w-auto mr-2" style="max-height: 40px;">
+                                    <span class="text-white text-xl font-bold">Bissmoi Marchand</span>
                                 </a>
                             </div>
 
@@ -42,6 +48,9 @@
                                 <x-nav-link :href="route('merchant.profile')" :active="request()->routeIs('merchant.profile')" class="text-white hover:text-blue-200">
                                     {{ __('Profil') }}
                                 </x-nav-link>
+                                    <x-nav-link :href="route('merchant.verification.request.form')" :active="request()->routeIs('merchant.verification.request.form')" class="text-white hover:text-blue-200">
+                                        {{ __('Demande de badge') }}
+                                    </x-nav-link>
                             </div>
                         </div>
 
@@ -109,6 +118,9 @@
                         <x-responsive-nav-link :href="route('merchant.profile')" :active="request()->routeIs('merchant.profile')" class="text-white">
                             {{ __('Profil') }}
                         </x-responsive-nav-link>
+                        <x-responsive-nav-link :href="route('merchant.verification.request.form')" :active="request()->routeIs('merchant.verification.request.form')" class="text-white">
+                            {{ __('Demande de badge') }}
+                        </x-responsive-nav-link>
                     </div>
 
                     <!-- Responsive Settings Options -->
@@ -162,9 +174,14 @@
                         </div>
                     @endif
 
-                    {{ $slot }}
+                    @hasSection('slot')
+                        @yield('slot')
+                    @else
+                        {{ $slot }}
+                    @endif
                 </div>
             </main>
         </div>
+        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     </body>
 </html>

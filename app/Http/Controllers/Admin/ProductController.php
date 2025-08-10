@@ -16,7 +16,55 @@ class ProductController extends Controller
 
     public function index()
     {
-        $products = Product::with(['user', 'category'])->latest()->paginate(15);
+        $query = Product::with(['user', 'category']);
+
+        if (request()->filled('search')) {
+            $search = request('search');
+            $query->where('name', 'like', "%$search%");
+        }
+        if (request()->filled('user_id')) {
+            $query->where('user_id', request('user_id'));
+        }
+        if (request()->filled('merchant')) {
+            $merchant = request('merchant');
+            $query->whereHas('user', function($q) use ($merchant) {
+                $q->where('name', 'like', "%$merchant%");
+            });
+        }
+        if (request()->filled('shop_name')) {
+            $shopName = request('shop_name');
+            $query->whereHas('user', function($q) use ($shopName) {
+                $q->where('shop_name', 'like', "%$shopName%");
+            });
+        }
+        if (request()->filled('category')) {
+            $catId = request('category');
+            $query->where('category_id', $catId);
+        }
+        if (request()->filled('min_price')) {
+            $query->where('price', '>=', request('min_price'));
+        }
+        if (request()->filled('max_price')) {
+            $query->where('price', '<=', request('max_price'));
+        }
+        if (request()->filled('status')) {
+            $query->where('status', request('status'));
+        }
+        // Tri
+        $sort = request('sort', 'newest');
+        if ($sort === 'oldest') {
+            $query->orderBy('created_at', 'asc');
+        } elseif ($sort === 'price_asc') {
+            $query->orderBy('price', 'asc');
+        } elseif ($sort === 'price_desc') {
+            $query->orderBy('price', 'desc');
+        } elseif ($sort === 'name') {
+            $query->orderBy('name', 'asc');
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $products = $query->paginate(15)->appends(request()->except('page'));
         return view('admin.products.index', compact('products'));
     }
 
@@ -32,7 +80,9 @@ class ProductController extends Controller
             'status' => 'required|in:active,inactive,pending',
         ]);
 
-        $product->update($request->only('status'));
+        $data = $request->only('status');
+        $data['featured'] = $request->has('featured') ? true : false;
+        $product->update($data);
 
         return back()->with('success', 'Produit mis à jour avec succès!');
     }

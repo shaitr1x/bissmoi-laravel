@@ -9,9 +9,16 @@ class Order extends Model
 {
     use HasFactory;
 
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+    use HasFactory;
+
     protected $fillable = [
         'order_number',
         'user_id',
+        'merchant_id',
         'status',
         'total_amount',
         'tax_amount',
@@ -21,6 +28,8 @@ class Order extends Model
         'payment_method',
         'payment_status',
         'notes',
+        'delivery_address',
+        'phone',
     ];
 
     protected $casts = [

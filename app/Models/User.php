@@ -23,9 +23,12 @@ class User extends Authenticatable
         'password',
         'role',
         'merchant_approved',
+        'is_verified_merchant',
         'merchant_description',
         'merchant_phone',
         'merchant_address',
+        'is_active',
+        'shop_name',
     ];
 
     /**
@@ -46,6 +49,8 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'merchant_approved' => 'boolean',
+        'is_verified_merchant' => 'boolean',
+        'is_active' => 'boolean',
     ];
 
     // Relations
@@ -88,5 +93,21 @@ class User extends Authenticatable
     public function isApprovedMerchant()
     {
         return $this->role === 'merchant' && $this->merchant_approved;
+    }
+
+    /**
+     * Vérifie si l'utilisateur est un marchand vérifié (badge)
+     */
+    public function getIsVerifiedMerchantAttribute()
+    {
+        return $this->role === 'merchant' && $this->attributes['is_verified_merchant'];
+    }
+
+    /**
+     * Scope pour ne récupérer que les marchands vérifiés
+     */
+    public function scopeVerifiedMerchants($query)
+    {
+        return $query->where('role', 'merchant')->where('merchant_approved', true);
     }
 }

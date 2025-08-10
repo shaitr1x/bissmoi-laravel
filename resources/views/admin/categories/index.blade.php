@@ -12,6 +12,10 @@
 
     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6">
+            <form method="GET" action="" class="mb-4 flex items-center space-x-2">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Rechercher une catégorie..." class="border rounded px-3 py-2 w-full max-w-xs" />
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Rechercher</button>
+            </form>
             <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead class="bg-gray-50">

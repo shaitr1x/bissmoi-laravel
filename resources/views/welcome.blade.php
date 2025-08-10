@@ -8,7 +8,7 @@
             <p class="text-xl md:text-2xl mb-8 opacity-90">
                 La marketplace qui connecte commerçants et clients
             </p>
-            <div class="space-x-4">
+            <div class="flex flex-col sm:flex-row gap-5 sm:gap-0 sm:space-x-4 items-center justify-center">
                 <a href="{{ route('products.index') }}" class="inline-flex items-center px-6 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition">
                     Découvrir les produits
                 </a>
@@ -17,6 +17,13 @@
                         Devenir commerçant
                     </a>
                 @endguest
+                @auth
+                    @if(Auth::user()->isClient())
+                        <a href="{{ route('become-merchant.form') }}" class="inline-flex items-center px-6 py-3 border-2 border-yellow-400 text-yellow-700 font-semibold rounded-lg hover:bg-yellow-400 hover:text-white transition">
+                            Devenir commerçant
+                        </a>
+                    @endif
+                @endauth
             </div>
         </div>
     </div>
@@ -52,8 +59,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     @foreach($featuredProducts as $product)
                         <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
-                            <div class="h-48 bg-gray-200 flex items-center justify-center">
-                                <span class="text-4xl">📱</span>
+                            <div class="h-48 overflow-hidden flex items-center justify-center bg-gray-100">
+                                <x-product-image :product="$product" size="large" class="h-48" />
                             </div>
                             <div class="p-4">
                                 <h3 class="font-semibold text-lg mb-2">{{ $product->name }}</h3>
@@ -61,10 +68,10 @@
                                 <div class="flex justify-between items-center">
                                     <div>
                                         @if($product->sale_price)
-                                            <span class="text-lg font-bold text-red-600">{{ number_format($product->sale_price, 2) }}€</span>
-                                            <span class="text-sm text-gray-500 line-through ml-1">{{ number_format($product->price, 2) }}€</span>
+                                            <span class="text-lg font-bold text-red-600">{{ number_format($product->sale_price, 2) }} FCFA</span>
+                                            <span class="text-sm text-gray-500 line-through ml-1">{{ number_format($product->price, 2) }} FCFA</span>
                                         @else
-                                            <span class="text-lg font-bold text-gray-900">{{ number_format($product->price, 2) }}€</span>
+                                            <span class="text-lg font-bold text-gray-900">{{ number_format($product->price, 2) }} FCFA</span>
                                         @endif
                                     </div>
                                     <a href="{{ route('products.show', $product) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
@@ -86,23 +93,14 @@
                 <h2 class="text-3xl font-bold text-center mb-12">Derniers Produits</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     @foreach($latestProducts->take(8) as $product)
-                        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
-                            <div class="h-48 overflow-hidden">
-                                @if($product->image)
-                                    <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" 
-                                         class="w-full h-full object-cover">
-                                @else
-                                    <div class="w-full h-full bg-gray-200 flex items-center justify-center">
-                                        <svg class="h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                        </svg>
-                                    </div>
-                                @endif
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition flex flex-col h-full">
+                            <div class="h-48 overflow-hidden flex items-center justify-center bg-gray-50">
+                                <x-product-image :product="$product" size="large" class="object-contain h-44 w-full" />
                             </div>
-                            <div class="p-4">
-                                <h3 class="font-semibold text-lg mb-2">{{ $product->name }}</h3>
-                                <p class="text-gray-600 text-sm mb-3">{{ Str::limit($product->description, 80) }}</p>
-                                <div class="flex justify-between items-center">
+                            <div class="p-4 flex flex-col flex-1">
+                                <h3 class="font-semibold text-lg mb-2 line-clamp-2">{{ $product->name }}</h3>
+                                <p class="text-gray-600 text-sm mb-3 flex-1">{{ Str::limit($product->description, 80) }}</p>
+                                <div class="flex justify-between items-end mt-2">
                                     <div>
                                         @if($product->sale_price)
                                             <span class="text-lg font-bold text-green-600">{{ number_format($product->sale_price, 0, ',', ' ') }} FCFA</span>
@@ -186,6 +184,7 @@
                     <ul class="space-y-2 text-gray-300">
                         <li><a href="{{ route('welcome') }}" class="hover:text-white">Accueil</a></li>
                         <li><a href="{{ route('products.index') }}" class="hover:text-white">Produits</a></li>
+                        <li><a href="{{ route('blog.index') }}" class="hover:text-white">Blog</a></li>
                         @auth
                             <li><a href="{{ route('orders.index') }}" class="hover:text-white">Mes commandes</a></li>
                         @endauth
@@ -200,6 +199,9 @@
                         @auth
                             @if(auth()->user()->isMerchant())
                                 <li><a href="{{ route('merchant.dashboard') }}" class="hover:text-white">Espace commerçant</a></li>
+                                    <li><a href="{{ route('merchant.dashboard') }}#verification" class="hover:text-white">Demander le badge de vérification</a></li>
+                            @elseif(auth()->user()->isClient())
+                                <li><a href="{{ route('become-merchant.form') }}" class="hover:text-white">Devenir commerçant</a></li>
                             @endif
                         @endauth
                     </ul>
@@ -207,8 +209,10 @@
                 <div>
                     <h3 class="text-lg font-semibold mb-4">Contact</h3>
                     <p class="text-gray-300">
-                        Email: contact@bissmoi.com<br>
-                        Téléphone: +225 01 23 45 67 89
+                        Email: Bissmoi@gmail.com<br>
+                        Téléphone: +216 99 185 904
+                            <br>
+                            <a href="mailto:support@bissmoi.com" class="text-gray-300 hover:text-white mt-2 inline-block">Service Client</a>
                     </p>
                 </div>
             </div>

@@ -30,36 +30,47 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6">
                     <!-- Images -->
                     <div>
+
                         <div class="aspect-w-4 aspect-h-3 mb-4">
-                            @if($product->image)
-                                <img id="mainImage" src="{{ asset($product->image) }}" alt="{{ $product->name }}" 
-                                     class="w-full h-96 object-cover rounded-lg">
-                            @else
-                                <div class="w-full h-96 bg-gray-200 rounded-lg flex items-center justify-center">
-                                    <svg class="h-24 w-24 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                </div>
-                            @endif
+                            @php
+                                $mainImage = null;
+                                $images = $product->images;
+                                // S'assurer que c'est un tableau
+                                if (is_string($images)) {
+                                    $images = json_decode($images, true) ?: [];
+                                }
+                                if (is_array($images) && count($images) > 0) {
+                                    $mainImage = asset('images/products/' . basename($images[0]));
+                                } elseif (!empty($product->image)) {
+                                    $mainImage = asset('images/products/' . basename($product->image));
+                                } else {
+                                    $mainImage = asset('images/default-product.svg');
+                                }
+                            @endphp
+                            <img id="mainImage" src="{{ $mainImage }}" alt="{{ $product->name }}"
+                                 class="w-full h-96 object-cover rounded-lg">
                         </div>
 
                         <!-- Images supplémentaires -->
-                        @if($product->images)
-                            @php $additionalImages = json_decode($product->images, true); @endphp
-                            @if($additionalImages && count($additionalImages) > 0)
-                                <div class="grid grid-cols-4 gap-2">
-                                    @if($product->image)
-                                        <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" 
-                                             class="w-full h-20 object-cover rounded cursor-pointer border-2 border-blue-500"
-                                             onclick="changeMainImage('{{ asset($product->image) }}', this)">
-                                    @endif
-                                    @foreach($additionalImages as $image)
-                                        <img src="{{ asset($image) }}" alt="{{ $product->name }}" 
-                                             class="w-full h-20 object-cover rounded cursor-pointer border-2 border-transparent hover:border-blue-300"
-                                             onclick="changeMainImage('{{ asset($image) }}', this)">
-                                    @endforeach
-                                </div>
-                            @endif
+                        @php
+                            $images = $product->images;
+                            // S'assurer que c'est un tableau
+                            if (is_string($images)) {
+                                $images = json_decode($images, true) ?: [];
+                            }
+                            // Si vide, fallback sur image unique (legacy)
+                            if ((!is_array($images) || count($images) === 0) && !empty($product->image)) {
+                                $images = [$product->image];
+                            }
+                        @endphp
+                        @if(is_array($images) && count($images) > 0)
+                            <div class="grid grid-cols-4 gap-2">
+                                @foreach($images as $image)
+                                    <img src="{{ asset('images/products/' . basename($image)) }}" alt="{{ $product->name }}" 
+                                         class="w-full h-20 object-cover rounded cursor-pointer border-2 border-transparent hover:border-blue-300"
+                                         onclick="changeMainImage('{{ asset('images/products/' . basename($image)) }}', this)">
+                                @endforeach
+                            </div>
                         @endif
                     </div>
 
@@ -70,7 +81,15 @@
                             <div class="flex items-center space-x-4 text-sm text-gray-600">
                                 <span>Catégorie: {{ $product->category->name }}</span>
                                 <span>•</span>
-                                <span>Vendeur: {{ $product->user->name }}</span>
+                                <span class="flex items-center">
+                                    Boutique: {{ $product->user->shop_name ?? $product->user->name }}
+                                    @if($product->user->is_verified_merchant)
+                                        <span title="Marchand vérifié" class="inline-flex items-center ml-2 px-2 py-0.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            <svg class="w-3 h-3 mr-1 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.707a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                                            Vérifié
+                                        </span>
+                                    @endif
+                                </span>
                             </div>
                         </div>
 
@@ -163,16 +182,7 @@
                             <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow duration-300">
                                 <div class="aspect-w-16 aspect-h-12">
                                     <a href="{{ route('products.show', $relatedProduct) }}">
-                                        @if($relatedProduct->image)
-                                            <img src="{{ asset($relatedProduct->image) }}" alt="{{ $relatedProduct->name }}" 
-                                                 class="w-full h-40 object-cover rounded-t-lg">
-                                        @else
-                                            <div class="w-full h-40 bg-gray-200 rounded-t-lg flex items-center justify-center">
-                                                <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                                </svg>
-                                            </div>
-                                        @endif
+                                        <x-product-image :product="$relatedProduct" size="large" class="h-40 rounded-t-lg" />
                                     </a>
                                 </div>
 
@@ -197,9 +207,147 @@
                 </div>
             @endif
         </div>
+
+        <!-- Section des avis clients -->
+        <div class="mt-12 bg-white rounded-lg shadow">
+            <div class="px-6 py-4 border-b border-gray-200">
+                <h3 class="text-xl font-semibold text-gray-900">Avis clients</h3>
+                <div class="mt-2 flex items-center space-x-4">
+                    <div class="flex items-center">
+                        @for($i = 1; $i <= 5; $i++)
+                            <svg class="w-5 h-5 {{ $i <= $product->average_rating ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                        @endfor
+                        <span class="ml-2 text-lg font-medium">{{ number_format($product->average_rating, 1) }}</span>
+                    </div>
+                    <span class="text-gray-600">({{ $product->reviews_count }} avis)</span>
+                </div>
+            </div>
+
+            <div class="p-6">
+                @auth
+                    <!-- Formulaire pour ajouter un avis -->
+                    <div class="mb-8 p-4 bg-gray-50 rounded-lg">
+                        <h4 class="font-semibold text-gray-900 mb-4">Donnez votre avis</h4>
+                        <form action="{{ route('reviews.store', $product) }}" method="POST">
+                            @csrf
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Note</label>
+                                <div class="flex space-x-2">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <label class="cursor-pointer">
+                                            <input type="radio" name="rating" value="{{ $i }}" class="sr-only" required>
+                                            <svg class="w-6 h-6 text-gray-300 hover:text-yellow-400 rating-star" fill="currentColor" viewBox="0 0 20 20">
+                                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                            </svg>
+                                        </label>
+                                    @endfor
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="comment" class="block text-sm font-medium text-gray-700 mb-2">Commentaire</label>
+                                <textarea id="comment" name="comment" rows="4" class="w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Partagez votre expérience avec ce produit..." required></textarea>
+                            </div>
+
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                Publier l'avis
+                            </button>
+                        </form>
+                    </div>
+                @else
+                    <div class="mb-8 p-4 bg-gray-50 rounded-lg text-center">
+                        <p class="text-gray-600">
+                            <a href="{{ route('login') }}" class="text-blue-600 hover:underline">Connectez-vous</a> 
+                            pour donner votre avis sur ce produit.
+                        </p>
+                    </div>
+                @endauth
+
+                <!-- Liste des avis -->
+                <div id="reviews-container">
+                    @foreach($product->reviews()->with('user')->latest()->take(5)->get() as $review)
+                        <div class="border-b border-gray-200 pb-6 mb-6 last:border-b-0">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="flex-shrink-0">
+                                        <div class="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+                                            <span class="text-sm font-medium text-gray-600">
+                                                {{ strtoupper(substr($review->user->shop_name ?? $review->user->name, 0, 2)) }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-900">{{ $review->user->shop_name ?? $review->user->name }}</p>
+                                        <div class="flex items-center mt-1">
+                                            @for($i = 1; $i <= 5; $i++)
+                                                <svg class="w-4 h-4 {{ $i <= $review->rating ? 'text-yellow-400' : 'text-gray-300' }}" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                                </svg>
+                                            @endfor
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    {{ $review->created_at->diffForHumans() }}
+                                </div>
+                            </div>
+                            <p class="text-gray-700 mb-3">{{ $review->comment }}</p>
+                            <div class="flex items-center space-x-4 text-sm">
+                                <button onclick="voteHelpful({{ $review->id }})" class="text-gray-500 hover:text-gray-700 vote-btn">
+                                    👍 Utile (<span class="helpful-count">{{ $review->helpful_votes }}</span>)
+                                </button>
+                            </div>
+                        </div>
+                    @endforeach
+
+                    @if($product->reviews()->count() > 5)
+                        <div class="text-center">
+                            <button class="px-4 py-2 text-blue-600 border border-blue-600 rounded-md hover:bg-blue-50">
+                                Voir tous les avis
+                            </button>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
+        // Gestion des étoiles pour la note
+        document.querySelectorAll('input[name="rating"]').forEach((input, index) => {
+            input.addEventListener('change', function() {
+                const stars = document.querySelectorAll('.rating-star');
+                stars.forEach((star, starIndex) => {
+                    if (starIndex <= index) {
+                        star.classList.remove('text-gray-300');
+                        star.classList.add('text-yellow-400');
+                    } else {
+                        star.classList.remove('text-yellow-400');
+                        star.classList.add('text-gray-300');
+                    }
+                });
+            });
+        });
+
+        // Fonction pour voter utile
+        function voteHelpful(reviewId) {
+            fetch(`/reviews/${reviewId}/vote`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelector(`button[onclick="voteHelpful(${reviewId})"] .helpful-count`).textContent = data.helpful_votes;
+                }
+            });
+        }
+
         function changeMainImage(imageSrc, thumbnail) {
             document.getElementById('mainImage').src = imageSrc;
             

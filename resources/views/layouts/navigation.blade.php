@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('welcome') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800" />
+                        <img src="{{ asset('images/logo-bissmoi.svg') }}" alt="BISSMOI" class="block h-9 w-auto" style="max-height: 48px;">
                     </a>
                 </div>
 
@@ -32,16 +32,25 @@
                 </div>
             </div>
 
-            <!-- Settings Dropdown -->
-            <div class="hidden sm:flex sm:items-center sm:ml-6 space-x-4">
+            <!-- Always visible cart and notifications -->
+            <div class="flex items-center sm:ml-6 space-x-4">
                 @auth
-                    <!-- Panier -->
-                    <a href="{{ route('cart.index') }}" class="relative text-gray-500 hover:text-gray-700 transition duration-150">
+                    <!-- Panier toujours visible -->
+                    <a href="{{ route('cart.index') }}" class="relative text-gray-500 hover:text-gray-700 transition duration-150 flex items-center" aria-label="Mon panier">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l-2.5 5m0 0L17 18m0 0v0a1.5 1.5 0 01-3 0v0m3 0a1.5 1.5 0 01-3 0m0 0H9m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v9.5z"/>
                         </svg>
                         <span id="cartCount" class="absolute -top-2 -right-2 bg-blue-600 text-white rounded-full text-xs px-1.5 py-0.5 hidden"></span>
                     </a>
+                    <!-- Notifications -->
+                    <div class="relative">
+                        <a href="{{ route('notifications.client') }}" class="relative text-gray-500 hover:text-gray-700 transition duration-150 focus:outline-none" aria-label="Notifications">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                            <span id="notifBadge" class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs px-1.5 py-0.5 hidden"></span>
+                        </a>
+                    </div>
                 @endauth
 
                 @auth
@@ -86,11 +95,12 @@
 
             <!-- Hamburger -->
             <div class="-mr-2 flex items-center sm:hidden">
-                <button @click="open = ! open" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
+                <button @click="open = ! open" class="relative inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
                     <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                         <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                         <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
+                    <span id="burgerNotifDot" class="absolute top-1 right-1 w-2 h-2 bg-red-600 rounded-full hidden"></span>
                 </button>
             </div>
         </div>
@@ -98,10 +108,32 @@
 
     <!-- Responsive Navigation Menu -->
     <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                {{ __('Dashboard') }}
+        <div class="pt-4 pb-3 flex flex-col gap-2 items-start">
+            <x-responsive-nav-link :href="route('welcome')" :active="request()->routeIs('welcome')">
+                {{ __('Accueil') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('products.index')" :active="request()->routeIs('products.*')">
+                {{ __('Produits') }}
+            </x-responsive-nav-link>
+            <a href="#" id="mobileNotifLink" class="relative flex items-center text-gray-700 text-sm font-medium">
+                <span>Notifications</span>
+                <span id="mobileNotifCount" class="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full hidden"></span>
+            </a>
+            @auth
+                @if(Auth::user()->isAdmin() && request()->routeIs('welcome'))
+                    <x-responsive-nav-link :href="route('admin.dashboard')">
+                        {{ __('Administration') }}
+                    </x-responsive-nav-link>
+                @endif
+            @endauth
+            @guest
+                <x-responsive-nav-link :href="route('login')" :active="request()->routeIs('login')">
+                    {{ __('Se connecter') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('register')" :active="request()->routeIs('register')">
+                    {{ __('S\'inscrire') }}
+                </x-responsive-nav-link>
+            @endguest
         </div>
 
         <!-- Responsive Settings Options -->

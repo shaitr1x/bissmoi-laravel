@@ -16,7 +16,17 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $categories = Category::with('parent', 'children')->orderBy('name')->paginate(15);
+        $query = Category::with(['parent', 'children'])->withCount('products');
+        if (request()->filled('search')) {
+            $search = request('search');
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%$search%")
+                  ->orWhereHas('parent', function($q2) use ($search) {
+                      $q2->where('name', 'like', "%$search%");
+                  });
+            });
+        }
+        $categories = $query->orderBy('name')->paginate(15)->appends(request()->only('search'));
         return view('admin.categories.index', compact('categories'));
     }
 
@@ -72,7 +82,7 @@ class CategoryController extends Controller
             'slug' => Str::slug($request->name),
             'description' => $request->description,
             'parent_id' => $request->parent_id,
-            'is_active' => $request->boolean('is_active', true),
+            'is_active' => $request->boolean('is_active', false),
         ]);
 
         return redirect()->route('admin.categories.index')->with('success', 'Catégorie mise à jour avec succès!');
