@@ -1,8 +1,12 @@
+
 FROM composer:2.7 AS build
 
 WORKDIR /app
 
 COPY . .
+
+# Installe Node.js et npm
+RUN apt-get update && apt-get install -y nodejs npm
 
 RUN composer install --no-dev --optimize-autoloader
 RUN cp .env.example .env || true
