@@ -1,12 +1,16 @@
 
-FROM composer:2.7 AS build
+
+FROM php:8.2-cli AS build
 
 WORKDIR /app
 
-COPY . .
+# Installe les dépendances système
+RUN apt-get update && apt-get install -y git unzip libpq-dev nodejs npm
 
-# Installe Node.js et npm
-RUN apt-get update && apt-get install -y nodejs npm
+# Installe Composer
+COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
+
+COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 RUN cp .env.example .env || true
