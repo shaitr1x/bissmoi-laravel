@@ -17,6 +17,9 @@ RUN cp .env.example .env || true
 RUN php artisan key:generate
 RUN npm install && npm run build
 
+CMD echo "Starting Laravel..." && php artisan serve --host=0.0.0.0 --port=8080
+
+
 FROM php:8.2-cli
 
 WORKDIR /app
