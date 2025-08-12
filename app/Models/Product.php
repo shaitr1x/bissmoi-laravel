@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Models;
-// ...existing code...
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,25 +8,6 @@ use Illuminate\Support\Str;
 
 class Product extends Model
 {
-    use HasFactory;
-
-    // Mutateur pour garantir que images est toujours un array plat de strings
-    public function setImagesAttribute($value)
-    {
-        // Si c'est une string JSON, on la décode
-        if (is_string($value)) {
-            $value = json_decode($value, true) ?: [];
-        }
-        // Si c'est un array imbriqué, on l'aplatit
-        $flat = [];
-        $iterator = new \RecursiveIteratorIterator(new \RecursiveArrayIterator((array)$value));
-        foreach ($iterator as $v) {
-            if (is_string($v) && $v !== '') {
-                $flat[] = $v;
-            }
-        }
-        $this->attributes['images'] = json_encode($flat);
-    }
     use HasFactory;
 
     protected $fillable = [

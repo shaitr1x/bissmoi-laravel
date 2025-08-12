@@ -16,9 +16,12 @@
                     </select>
                 </form>
                 
-                <button onclick="markAllAsRead()" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700">
-                    Tout marquer comme lu
-                </button>
+                <form action="{{ route('admin.notifications.readAll') }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir marquer toutes les notifications comme lues ?')" style="display:inline;">
+                    @csrf
+                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700">
+                        Tout marquer comme lu
+                    </button>
+                </form>
             </div>
         </div>
     </x-slot>
@@ -222,38 +225,5 @@
         </div>
     </div>
 
-    @push('scripts')
-    <script>
-        function markAllAsRead() {
-            if (confirm('Êtes-vous sûr de vouloir marquer toutes les notifications comme lues ?')) {
-                // Créer un formulaire temporaire pour marquer toutes les notifications comme lues
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '{{ route("admin.notifications.index") }}';
-                
-                const csrfToken = document.createElement('input');
-                csrfToken.type = 'hidden';
-                csrfToken.name = '_token';
-                csrfToken.value = '{{ csrf_token() }}';
-                
-                const methodField = document.createElement('input');
-                methodField.type = 'hidden';
-                methodField.name = '_method';
-                methodField.value = 'PATCH';
-                
-                const actionField = document.createElement('input');
-                actionField.type = 'hidden';
-                actionField.name = 'action';
-                actionField.value = 'mark_all_read';
-                
-                form.appendChild(csrfToken);
-                form.appendChild(methodField);
-                form.appendChild(actionField);
-                
-                document.body.appendChild(form);
-                form.submit();
-            }
-        }
-    </script>
-    @endpush
+    {{-- JS supprimé, plus nécessaire --}}
 </x-admin-layout>

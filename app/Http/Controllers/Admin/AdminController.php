@@ -15,6 +15,17 @@ use Carbon\Carbon;
 
 class AdminController extends Controller
 {
+    /**
+     * Marquer toutes les notifications admin comme lues
+     */
+    public function markAllNotificationsAsRead()
+    {
+        AdminNotification::where('is_read', false)->update([
+            'is_read' => true,
+            'read_at' => now(),
+        ]);
+        return redirect()->route('admin.notifications.index')->with('success', 'Toutes les notifications ont été marquées comme lues !');
+    }
     // Afficher les demandes de vérification des marchands
     public function merchantVerificationRequests()
     {

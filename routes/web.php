@@ -62,6 +62,19 @@ Route::get('/', [HomeController::class, 'index'])->name('welcome');
 Route::get('/home', function () {
     return redirect()->route('welcome');
 })->name('home');
+// Remerciements (Acknowledgements) routes
+use App\Http\Controllers\RemerciementController;
+
+// Public page
+Route::get('/remerciements', [RemerciementController::class, 'index'])->name('remerciements.index');
+
+// Admin panel (protected by 'auth' and 'admin' middleware)
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/remerciements', [RemerciementController::class, 'admin'])->name('remerciements.admin');
+    Route::post('/admin/remerciements', [RemerciementController::class, 'store'])->name('remerciements.store');
+    Route::delete('/admin/remerciements/{id}', [RemerciementController::class, 'destroy'])->name('remerciements.destroy');
+    Route::post('/admin/remerciements/fondateurs', [RemerciementController::class, 'updateFondateurs'])->name('remerciements.fondateurs');
+});
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/search', [ProductController::class, 'search'])->name('products.search');
@@ -135,6 +148,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/notifications', [AdminController::class, 'notifications'])->name('notifications.index');
     Route::patch('/notifications/{notification}/read', [AdminController::class, 'markNotificationAsRead'])->name('notifications.read');
     Route::delete('/notifications/{notification}', [AdminController::class, 'deleteNotification'])->name('notifications.delete');
+    Route::post('/notifications/read-all', [AdminController::class, 'markAllNotificationsAsRead'])->name('notifications.readAll');
 
     // Gestion des avis
     Route::get('/reviews', [AdminController::class, 'reviews'])->name('reviews.index');

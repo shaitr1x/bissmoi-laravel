@@ -11,31 +11,19 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <!-- Images -->
                     <div>
+                        <x-product-image :product="$product" size="xl" />
                         @php
                             $images = $product->images;
                             if (is_string($images)) {
                                 $images = json_decode($images, true) ?: [];
                             }
-                            $mainImage = (is_array($images) && count($images) > 0) ? asset($images[0]) : asset('images/default-product.svg');
                         @endphp
-                        <div class="aspect-w-4 aspect-h-3 mb-4">
-                            <img id="mainImage" src="{{ $mainImage }}" alt="{{ $product->name }}" class="w-full max-h-96 h-auto object-contain rounded-lg sm:h-96">
-                        </div>
-                        @if(is_array($images) && count($images) > 0)
-                            <div class="flex gap-2 mt-4 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300" style="-webkit-overflow-scrolling: touch;">
-                                @foreach($images as $img)
-                                    @if(is_string($img))
-                                        <img src="{{ asset($img) }}" alt="{{ $product->name }}" class="w-20 h-20 object-cover rounded cursor-pointer border-2 border-transparent hover:border-blue-300 flex-shrink-0" onclick="changeMainImage('{{ asset($img) }}', this)">
-                                    @endif
+                        @if(is_array($images) && count($images) > 1)
+                            <div class="flex gap-2 mt-4">
+                                @foreach(array_slice($images, 1) as $img)
+                                    <img src="{{ asset('storage/' . $img) }}" alt="{{ $product->name }}" class="w-20 h-20 object-cover rounded border">
                                 @endforeach
                             </div>
-                            <script>
-                                function changeMainImage(imageSrc, thumbnail) {
-                                    document.getElementById('mainImage').src = imageSrc;
-                                    document.querySelectorAll('.flex img').forEach(img => img.classList.remove('border-blue-300'));
-                                    thumbnail.classList.add('border-blue-300');
-                                }
-                            </script>
                         @endif
                     </div>
                     <!-- Infos produit -->

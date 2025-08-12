@@ -216,7 +216,10 @@
                     </p>
                 </div>
             </div>
-            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+            <div class="mt-8 pt-4 text-center">
+                <a href="{{ route('remerciements.index') }}" class="text-gray-400 hover:text-white underline">Remerciements</a>
+            </div>
+            <div class="border-t border-gray-700 mt-4 pt-8 text-center text-gray-400">
                 <p>&copy; {{ date('Y') }} Bissmoi. Tous droits réservés.</p>
             </div>
         </div>
