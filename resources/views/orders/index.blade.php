@@ -44,7 +44,7 @@
                                             @endswitch
                                         </span>
                                         <p class="text-lg font-bold text-gray-900 mt-1">
-                                            {{ number_format($order->total, 0, ',', ' ') }} FCFA
+                                            {{ number_format($order->total_amount ?? $order->total, 0, ',', ' ') }} FCFA
                                         </p>
                                     </div>
                                 </div>

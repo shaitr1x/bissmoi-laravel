@@ -63,7 +63,7 @@
                                 @endswitch
                             </span>
                             <p class="text-xl font-bold text-gray-900 mt-1">
-                                {{ number_format($order->total, 0, ',', ' ') }} FCFA
+                                {{ number_format($order->total_amount ?? $order->total, 0, ',', ' ') }} FCFA
                             </p>
                         </div>
                     </div>
@@ -100,20 +100,24 @@
                                 <div class="space-y-2">
                                     <div class="flex justify-between text-sm">
                                         <span class="text-gray-600">Sous-total:</span>
-                                        <span class="font-medium">{{ number_format($order->total, 0, ',', ' ') }} FCFA</span>
+                                        <span class="font-medium">{{ number_format($order->subtotal ?? ($order->total_amount ?? $order->total), 0, ',', ' ') }} FCFA</span>
                                     </div>
                                     <div class="flex justify-between text-sm">
                                         <span class="text-gray-600">Livraison:</span>
-                                        <span class="font-medium text-green-600">Gratuite</span>
+                                        <span class="font-medium {{ ($order->shipping_amount ?? 0) == 0 ? 'text-green-600' : '' }}">
+                                            {{ ($order->shipping_amount ?? 0) == 0 ? 'Gratuite' : number_format($order->shipping_amount, 0, ',', ' ') . ' FCFA' }}
+                                        </span>
                                     </div>
                                     <div class="flex justify-between text-sm">
                                         <span class="text-gray-600">TVA:</span>
-                                        <span class="font-medium">Incluse</span>
+                                        <span class="font-medium">
+                                            {{ ($order->tax_amount ?? 0) == 0 ? 'Incluse' : number_format($order->tax_amount, 0, ',', ' ') . ' FCFA' }}
+                                        </span>
                                     </div>
                                     <div class="border-t pt-2">
                                         <div class="flex justify-between">
                                             <span class="text-lg font-semibold text-gray-900">Total:</span>
-                                            <span class="text-lg font-bold text-gray-900">{{ number_format($order->total, 0, ',', ' ') }} FCFA</span>
+                                            <span class="text-lg font-bold text-gray-900">{{ number_format($order->total_amount ?? $order->total, 0, ',', ' ') }} FCFA</span>
                                         </div>
                                     </div>
                                 </div>
