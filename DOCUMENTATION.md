@@ -329,6 +329,34 @@ Seuls les utilisateurs avec le rôle "admin" peuvent y accéder.
 
 ---
 
+## 🆕 Nouveautés et Améliorations Récentes
+
+### 🔔 Notifications Administrateur
+- Nouvelle page admin pour gérer toutes les notifications (filtres, pagination, actions rapides)
+- Bouton "Tout marquer comme lu" pour les notifications admin (action sécurisée, confirmation)
+- Marquage individuel ou global, suppression, et mise à jour dynamique des compteurs
+- Affichage des notifications avec icônes, couleurs, et badge "Nouveau"
+
+### 🙏 Page Remerciements
+- Accessible dans le footer, liste les fondateurs et contributeurs du projet
+- Gestion possible depuis l'admin (ajout, suppression, édition)
+
+### 🔒 Sécurité & Connexion
+- Redirection après connexion selon le rôle (dashboard client, commerçant, admin)
+- Debug session possible (voir l'état de connexion sur la page d'accueil en local)
+- Correction de bugs de session/déconnexion intempestive
+
+### 🛠 Procédure Git en cas de conflit
+- Si un push échoue (non-fast-forward), faire :
+  1. `git add .`
+  2. `git commit -m "WIP: sync avant pull rebase"`
+  3. `git pull --rebase`
+  4. Résoudre les conflits (garder ou supprimer les fichiers concernés)
+  5. `git rebase --continue`
+  6. `git push`
+
+---
+
 ## 🎉 Conclusion
 
 Bissmoi est conçu pour être **simple mais puissant**. Que vous soyez client, commerçant ou administrateur, chaque fonctionnalité a été pensée pour vous faciliter la vie.
