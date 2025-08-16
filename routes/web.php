@@ -97,6 +97,8 @@ Route::middleware('auth')->group(function () {
     
     // Routes des commandes
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+    Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
     Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::get('/checkout', [OrderController::class, 'checkout'])->name('orders.checkout');
     Route::post('/checkout', [OrderController::class, 'store'])->name('orders.store');

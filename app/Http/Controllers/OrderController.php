@@ -7,24 +7,63 @@ use App\Models\OrderItem;
 use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
+    // Suppression d'une commande par l'utilisateur (historique)
+    public function destroy(Order $order)
+    {
+        if ($order->user_id !== Auth::id() || !in_array($order->status, ['cancelled', 'delivered'])) {
+            abort(403);
+        }
+        $order->orderItems()->delete();
+        $order->delete();
+        return redirect()->route('orders.index')->with('success', "Commande supprimée de l'historique.");
+    }
     public function __construct()
     {
         $this->middleware('auth');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $orders = Order::with(['orderItems.product'])
-            ->where('user_id', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $query = Order::with(['orderItems.product'])
+            ->where('user_id', Auth::id());
+
+        // Filtres
+        if ($request->filled('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+        if ($request->filled('search')) {
+            $query->where('order_number', 'like', '%' . $request->search . '%');
+        }
+
+        // Tri
+        $sort = $request->get('sort', 'created_at');
+        $direction = $request->get('direction', 'desc');
+        if (in_array($sort, ['created_at', 'total_amount']) && in_array($direction, ['asc', 'desc'])) {
+            $query->orderBy($sort, $direction);
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $orders = $query->paginate(10)->appends($request->except('page'));
 
         return view('orders.index', compact('orders'));
+    }
+
+    // Annulation de commande par l'utilisateur
+    public function cancel(Order $order)
+    {
+        if ($order->user_id !== Auth::id() || !in_array($order->status, ['pending', 'processing'])) {
+            abort(403);
+        }
+        $order->status = 'cancelled';
+        $order->save();
+        return redirect()->route('orders.index')->with('success', 'Commande annulée avec succès.');
     }
 
     public function show(Order $order)

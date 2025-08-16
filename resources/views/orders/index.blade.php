@@ -4,6 +4,42 @@
             <h1 class="text-3xl font-bold text-gray-900 mb-8">Mes commandes</h1>
 
             @if($orders->count() > 0)
+                <!-- Filtres, tri, recherche -->
+                <form method="GET" class="mb-6 flex flex-wrap gap-2 items-end bg-white p-4 rounded-lg shadow">
+                    <div>
+                        <label for="status" class="block text-xs font-medium text-gray-700">Statut</label>
+                        <select name="status" id="status" class="form-select mt-1 block w-full">
+                            <option value="all"{{ request('status','all')=='all' ? ' selected' : '' }}>Tous</option>
+                            <option value="pending"{{ request('status')=='pending' ? ' selected' : '' }}>En attente</option>
+                            <option value="processing"{{ request('status')=='processing' ? ' selected' : '' }}>En préparation</option>
+                            <option value="shipped"{{ request('status')=='shipped' ? ' selected' : '' }}>Expédiée</option>
+                            <option value="delivered"{{ request('status')=='delivered' ? ' selected' : '' }}>Livrée</option>
+                            <option value="cancelled"{{ request('status')=='cancelled' ? ' selected' : '' }}>Annulée</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="sort" class="block text-xs font-medium text-gray-700">Trier par</label>
+                        <select name="sort" id="sort" class="form-select mt-1 block w-full">
+                            <option value="created_at"{{ request('sort','created_at')=='created_at' ? ' selected' : '' }}>Date</option>
+                            <option value="total_amount"{{ request('sort')=='total_amount' ? ' selected' : '' }}>Montant</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="direction" class="block text-xs font-medium text-gray-700">Ordre</label>
+                        <select name="direction" id="direction" class="form-select mt-1 block w-full">
+                            <option value="desc"{{ request('direction','desc')=='desc' ? ' selected' : '' }}>Décroissant</option>
+                            <option value="asc"{{ request('direction')=='asc' ? ' selected' : '' }}>Croissant</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="search" class="block text-xs font-medium text-gray-700">Recherche</label>
+                        <input type="text" name="search" id="search" value="{{ request('search') }}" class="form-input mt-1 block w-full" placeholder="N° commande...">
+                    </div>
+                    <div>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 transition">Filtrer</button>
+                    </div>
+                </form>
+
                 <div class="space-y-6">
                     @foreach($orders as $order)
                         <div class="bg-white rounded-lg shadow overflow-hidden">
@@ -46,6 +82,19 @@
                                         <p class="text-lg font-bold text-gray-900 mt-1">
                                             {{ number_format($order->total_amount ?? $order->total, 0, ',', ' ') }} FCFA
                                         </p>
+                                        @if(in_array($order->status, ['pending','processing']))
+                                            <form method="POST" action="{{ route('orders.cancel', $order) }}" onsubmit="return confirm('Annuler cette commande ?');">
+                                                @csrf
+                                                <button type="submit" class="mt-2 px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700">Annuler</button>
+                                            </form>
+                                        @endif
+                                        @if(in_array($order->status, ['delivered','cancelled']))
+                                            <form method="POST" action="{{ route('orders.destroy', $order) }}" onsubmit="return confirm('Supprimer définitivement cette commande de l\'historique ?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="mt-2 px-3 py-1 bg-gray-400 text-white text-xs rounded hover:bg-gray-600">Supprimer</button>
+                                            </form>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
