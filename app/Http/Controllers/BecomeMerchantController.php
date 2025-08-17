@@ -4,12 +4,20 @@ namespace App\Http\Controllers;
 use App\Events\UserNotificationCreated;
 use App\Events\AdminNotificationCreated;
 use App\Models\UserNotification;
+use App\Services\NotificationService;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class BecomeMerchantController extends Controller
 {
+    private $notificationService;
+
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
+
     public function showForm()
     {
         return view('auth.become-merchant');
@@ -34,14 +42,14 @@ class BecomeMerchantController extends Controller
         ]);
 
         // Notification côté client
-
-        $userNotif = UserNotification::createNotification(
+        $this->notificationService->sendToUser(
             $user->id,
             'Demande commerçant envoyée',
             'Votre demande pour devenir commerçant a bien été envoyée. Elle sera validée par un administrateur.',
             'info',
             'store',
-            null
+            null,
+            true // Envoyer email
         );
 
         // Broadcast désactivé en local pour éviter l'erreur Pusher/Websockets

@@ -5,6 +5,8 @@
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <link rel="manifest" href="{{ asset('manifest.json') }}">
+        <meta name="theme-color" content="#9DAAF2">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
@@ -48,6 +50,77 @@
                 setInterval(updateCartCount, 30000);
             </script>
         @endauth
+
+        <!-- PWA Install Popup & Service Worker -->
+        <script>
+            let deferredPrompt;
+            let installBtn = null;
+
+            // Écouter l'événement beforeinstallprompt
+            window.addEventListener('beforeinstallprompt', (e) => {
+                console.log('PWA: beforeinstallprompt event fired');
+                e.preventDefault();
+                deferredPrompt = e;
+                showInstallPopup();
+            });
+
+            // Fonction pour afficher le popup d'installation
+            function showInstallPopup() {
+                // Créer le popup
+                const popup = document.createElement('div');
+                popup.id = 'pwa-install-popup';
+                popup.innerHTML = `
+                    <div style="position: fixed; top: 30px; right: 30px; width: 350px; background: white; z-index: 9999; border-radius: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-align: center; padding: 24px;">
+                        <div style="width: 48px; height: 48px; background: #9DAAF2; border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center;">
+                            <span style="color: #1A2238; font-size: 22px; font-weight: bold;">B</span>
+                        </div>
+                        <h3 style="margin: 0 0 10px 0; color: #1A2238; font-size: 18px;">Installer BISSMOI</h3>
+                        <p style="margin: 0 0 18px 0; color: #666; font-size: 13px;">Installez l'application BISSMOI sur votre appareil pour un accès rapide et une meilleure expérience.</p>
+                        <div style="display: flex; gap: 10px; justify-content: center;">
+                            <button id="install-pwa-btn" style="background: #9DAAF2; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; font-weight: bold;">Installer</button>
+                            <button id="dismiss-pwa-btn" style="background: #ccc; color: #666; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer;">Plus tard</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(popup);
+
+                // Gérer les clics
+                document.getElementById('install-pwa-btn').addEventListener('click', () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        deferredPrompt.userChoice.then((choiceResult) => {
+                            console.log('PWA: User choice:', choiceResult.outcome);
+                            deferredPrompt = null;
+                            popup.remove();
+                        });
+                    }
+                });
+
+                document.getElementById('dismiss-pwa-btn').addEventListener('click', () => {
+                    popup.remove();
+                    // Ne plus afficher pendant cette session
+                    sessionStorage.setItem('pwa-dismissed', 'true');
+                });
+            }
+
+            // Enregistrer le service worker
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then((registration) => {
+                            console.log('PWA: Service Worker registered successfully');
+                        })
+                        .catch((error) => {
+                            console.log('PWA: Service Worker registration failed');
+                        });
+                });
+            }
+
+            // Écouter l'installation réussie
+            window.addEventListener('appinstalled', (evt) => {
+                console.log('PWA: App installed successfully');
+            });
+        </script>
     </head>
     </head>
     <body class="font-sans antialiased">

@@ -10,12 +10,21 @@ use App\Models\OrderItem;
 use App\Models\MerchantVerificationRequest;
 use App\Models\AdminNotification;
 use App\Models\UserNotification;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class MerchantController extends Controller
 {
+    private $notificationService;
+
+    public function __construct(NotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+        $this->middleware(['auth', 'merchant']);
+    }
+
     /**
      * Affiche la page dédiée au formulaire de demande de badge de vérification
      */
@@ -92,13 +101,14 @@ class MerchantController extends Controller
             $order->status = 'shipped';
             $order->save();
             // Notifier le client
-            UserNotification::createNotification(
+            $this->notificationService->sendToUser(
                 $order->user_id,
                 'Commande expédiée',
                 "Votre commande #{$order->order_number} a été expédiée. Elle est en cours de livraison.",
                 'info',
                 'truck',
-                ['order_id' => $order->id]
+                null,
+                true // Envoyer email
             );
             return redirect()->back()->with('success', 'Commande marquée comme expédiée.');
         }
@@ -130,22 +140,18 @@ class MerchantController extends Controller
             $order->status = 'delivered';
             $order->save();
             // Notifier le client
-            UserNotification::createNotification(
+            $this->notificationService->sendToUser(
                 $order->user_id,
                 'Commande livrée',
                 "Votre commande #{$order->order_number} a été livrée. Merci pour votre confiance !",
                 'success',
                 'package',
-                ['order_id' => $order->id]
+                null,
+                true // Envoyer email
             );
             return redirect()->back()->with('success', 'Commande marquée comme livrée.');
         }
         return redirect()->back()->with('error', 'La commande doit être expédiée pour être livrée.');
-    }
-
-    public function __construct()
-    {
-        $this->middleware(['auth', 'merchant']);
     }
 
     public function dashboard()
@@ -420,13 +426,14 @@ class MerchantController extends Controller
         $order->save();
 
         // Notifier le client
-        UserNotification::createNotification(
+        $this->notificationService->sendToUser(
             $order->user_id,
             'Commande validée',
             "Votre commande #{$order->order_number} a été validée par le commerçant. Elle est en cours de préparation.",
             'success',
             'check-circle',
-            ['order_id' => $order->id]
+            null,
+            true // Envoyer email
         );
 
         return redirect()->back()->with('success', 'Commande validée avec succès.');
