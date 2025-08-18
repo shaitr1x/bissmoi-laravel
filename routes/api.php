@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Models\Cart;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,4 +17,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+// API pour la navigation mobile
+Route::middleware('auth')->group(function () {
+    Route::get('/cart/count', function (Request $request) {
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['count' => 0]);
+        }
+        
+        $count = Cart::where('user_id', $user->id)->sum('quantity');
+        return response()->json(['count' => $count]);
+    });
 });

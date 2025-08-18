@@ -1,3 +1,133 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Navigation mobile améliorée */
+@layer components {
+    .mobile-nav-item {
+        @apply flex flex-col items-center py-2 px-3 transition-all duration-200 transform;
+    }
+    
+    .mobile-nav-item:hover {
+        @apply scale-105;
+    }
+    
+    .mobile-nav-item:active {
+        @apply scale-95;
+    }
+    
+    .mobile-nav-badge {
+        @apply absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center text-xs font-bold text-white rounded-full transform transition-all duration-200;
+    }
+    
+    .mobile-nav-badge.bounce-in {
+        animation: bounceIn 0.6s ease-out;
+    }
+    
+    .mobile-menu-overlay {
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
+    
+    .mobile-menu-panel {
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    
+    .mobile-menu-item {
+        @apply relative overflow-hidden;
+    }
+    
+    .mobile-menu-item::before {
+        content: '';
+        @apply absolute inset-0 bg-gradient-to-r from-blue-50 to-transparent opacity-0 transition-opacity duration-200;
+    }
+    
+    .mobile-menu-item:hover::before {
+        @apply opacity-100;
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Notification toast améliorée */
+@layer utilities {
+    .notification-toast {
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    @media (max-width: 640px) {
+        .notification-toast {
+            @apply left-4 right-4 mx-0 max-w-none;
+            right: 1rem !important;
+            left: 1rem !important;
+            max-width: none !important;
+        }
+    }
+}
+
+/* Amélioration du focus et accessibilité mobile */
+@layer base {
+    @media (max-width: 640px) {
+        button:focus,
+        a:focus {
+            outline: 2px solid #3B82F6;
+            outline-offset: 2px;
+        }
+        
+        /* Taille de zone de touch plus grande sur mobile */
+        .mobile-touch-target {
+            min-height: 44px;
+            min-width: 44px;
+        }
+    }
+}
+
+/* Loading states pour les badges */
+.badge-loading {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Styles pour le menu profil mobile */
+.profile-menu-enter {
+    animation: slideUpFade 0.3s ease-out;
+}
+
+.profile-menu-leave {
+    animation: slideDownFade 0.2s ease-in;
+}
+
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDownFade {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+}

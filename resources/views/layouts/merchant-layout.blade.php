@@ -104,51 +104,116 @@
                     </div>
                 </div>
 
-                <!-- Responsive Navigation Menu -->
-                <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden">
-                    <div class="pt-2 pb-3 space-y-1">
-                        <x-responsive-nav-link :href="route('merchant.dashboard')" :active="request()->routeIs('merchant.dashboard')" class="text-white">
-                            {{ __('Tableau de bord') }}
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('merchant.products.index')" :active="request()->routeIs('merchant.products.*')" class="text-white">
-                            {{ __('Mes produits') }}
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('merchant.orders')" :active="request()->routeIs('merchant.orders')" class="text-white">
-                            {{ __('Commandes') }}
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('merchant.profile')" :active="request()->routeIs('merchant.profile')" class="text-white">
-                            {{ __('Profil') }}
-                        </x-responsive-nav-link>
-                        <x-responsive-nav-link :href="route('merchant.verification.request.form')" :active="request()->routeIs('merchant.verification.request.form')" class="text-white">
-                            {{ __('Demande de badge') }}
-                        </x-responsive-nav-link>
+                <!-- Responsive Navigation Menu - Merchant Sliding Panel -->
+                <div x-show="open" 
+                     x-transition:enter="transition ease-out duration-300" 
+                     x-transition:enter-start="transform -translate-x-full" 
+                     x-transition:enter-end="transform translate-x-0"
+                     x-transition:leave="transition ease-in duration-200" 
+                     x-transition:leave-start="transform translate-x-0" 
+                     x-transition:leave-end="transform -translate-x-full"
+                     class="fixed inset-y-0 left-0 z-50 w-80 bg-white shadow-xl sm:hidden mobile-menu-panel">
+                    
+                    <!-- Header du menu -->
+                    <div class="flex items-center justify-between p-4 border-b border-gray-200">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                </svg>
+                            </div>
+                            <span class="text-lg font-semibold text-gray-900">Espace Vendeur</span>
+                        </div>
+                        <button @click="open = false" class="p-2 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
                     </div>
 
-                    <!-- Responsive Settings Options -->
-                    <div class="pt-4 pb-1 border-t border-blue-700">
-                        <div class="px-4">
-                            <div class="font-medium text-base text-white">{{ Auth::user()->name }}</div>
-                            <div class="font-medium text-sm text-blue-200">{{ Auth::user()->email }}</div>
+                    <!-- Navigation principale -->
+                    <div class="py-4 flex-1 overflow-y-auto">
+                        <div class="space-y-1 px-4">
+                            <a href="{{ route('merchant.dashboard') }}" class="mobile-menu-item group flex items-center px-4 py-3 text-base font-medium rounded-xl {{ request()->routeIs('merchant.dashboard') ? 'bg-green-50 text-green-700 border-l-4 border-green-700' : 'text-gray-700 hover:bg-gray-50' }} transition-all duration-200">
+                                <svg class="mr-4 h-6 w-6 {{ request()->routeIs('merchant.dashboard') ? 'text-green-500' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                </svg>
+                                Tableau de Bord
+                            </a>
+
+                            <a href="{{ route('merchant.products.index') }}" class="mobile-menu-item group flex items-center px-4 py-3 text-base font-medium rounded-xl {{ request()->routeIs('merchant.products.*') ? 'bg-green-50 text-green-700 border-l-4 border-green-700' : 'text-gray-700 hover:bg-gray-50' }} transition-all duration-200">
+                                <svg class="mr-4 h-6 w-6 {{ request()->routeIs('merchant.products.*') ? 'text-green-500' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                </svg>
+                                Mes Produits
+                            </a>
+
+                            <a href="{{ route('merchant.orders') }}" class="mobile-menu-item group flex items-center px-4 py-3 text-base font-medium rounded-xl {{ request()->routeIs('merchant.orders') ? 'bg-green-50 text-green-700 border-l-4 border-green-700' : 'text-gray-700 hover:bg-gray-50' }} transition-all duration-200">
+                                <svg class="mr-4 h-6 w-6 {{ request()->routeIs('merchant.orders') ? 'text-green-500' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                                </svg>
+                                Mes Commandes
+                            </a>
+
+                            <a href="{{ route('merchant.verification.request.form') }}" class="mobile-menu-item group flex items-center px-4 py-3 text-base font-medium rounded-xl {{ request()->routeIs('merchant.verification.request.form') ? 'bg-green-50 text-green-700 border-l-4 border-green-700' : 'text-gray-700 hover:bg-gray-50' }} transition-all duration-200">
+                                <svg class="mr-4 h-6 w-6 {{ request()->routeIs('merchant.verification.request.form') ? 'text-green-500' : 'text-gray-400 group-hover:text-gray-600' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Demande Badge
+                            </a>
+
+                            <a href="{{ route('home') }}" class="mobile-menu-item group flex items-center px-4 py-3 text-base font-medium rounded-xl text-gray-700 hover:bg-gray-50 transition-all duration-200">
+                                <svg class="mr-4 h-6 w-6 text-gray-400 group-hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                                Voir le Site
+                            </a>
                         </div>
+                    </div>
 
-                        <div class="mt-3 space-y-1">
-                            <x-responsive-nav-link :href="route('merchant.profile')" class="text-white">
-                                {{ __('Profil') }}
-                            </x-responsive-nav-link>
-
-                            <!-- Authentication -->
+                    <!-- Section utilisateur marchand -->
+                    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 bg-gray-50">
+                        <div class="flex items-center space-x-3 mb-4">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                <span class="text-green-600 font-semibold text-sm">{{ substr(Auth::user()->name, 0, 1) }}</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-semibold text-gray-900 truncate">{{ Auth::user()->name }}</p>
+                                <p class="text-xs text-green-600 truncate">Commerçant</p>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-2">
+                            <a href="{{ route('merchant.profile') }}" class="flex items-center w-full px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
+                                <svg class="mr-3 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                Mon Profil
+                            </a>
+                            
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-
-                                <x-responsive-nav-link :href="route('logout')"
-                                        onclick="event.preventDefault();
-                                                    this.closest('form').submit();" class="text-white">
-                                    {{ __('Se déconnecter') }}
-                                </x-responsive-nav-link>
+                                <button type="submit" class="flex items-center w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                    <svg class="mr-3 h-4 w-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                    </svg>
+                                    Se Déconnecter
+                                </button>
                             </form>
                         </div>
                     </div>
                 </div>
+
+                <!-- Overlay pour fermer le menu -->
+                <div x-show="open" 
+                     x-transition:enter="transition-opacity ease-out duration-300" 
+                     x-transition:enter-start="opacity-0" 
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="transition-opacity ease-in duration-200" 
+                     x-transition:leave-start="opacity-100" 
+                     x-transition:leave-end="opacity-0"
+                     @click="open = false"
+                     class="fixed inset-0 z-40 bg-black bg-opacity-25 sm:hidden mobile-menu-overlay"></div>
             </nav>
 
             <!-- Page Heading -->
@@ -182,6 +247,9 @@
                     @endif
                 </div>
             </main>
+
+            <!-- Navigation bottom mobile marchand -->
+            <x-merchant-mobile-bottom-nav />
         </div>
         <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     </body>
