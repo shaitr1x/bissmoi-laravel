@@ -32,8 +32,27 @@
                 </div>
             </div>
 
-            <!-- Settings & User Menu (desktop only) -->
+            <!-- Cart and notifications (desktop) -->
             <div class="hidden sm:flex items-center sm:ml-6 space-x-4">
+                @auth
+                    <!-- Panier desktop -->
+                    <a href="{{ route('cart.index') }}" class="relative text-gray-500 hover:text-gray-700 transition duration-150 flex items-center" aria-label="Mon panier">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l-2.5 5m0 0L17 18m0 0v0a1.5 1.5 0 01-3 0v0m3 0a1.5 1.5 0 01-3 0m0 0H9m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v9.5z"/>
+                        </svg>
+                        <span id="cartCount" class="absolute -top-2 -right-2 bg-blue-600 text-white rounded-full text-xs px-1.5 py-0.5 hidden"></span>
+                    </a>
+                    
+                    <!-- Notifications desktop -->
+                    <div class="relative">
+                        <a href="{{ route('notifications.client') }}" class="relative text-gray-500 hover:text-gray-700 transition duration-150 focus:outline-none" aria-label="Notifications">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                            <span id="notifBadge" class="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs px-1.5 py-0.5 hidden"></span>
+                        </a>
+                    </div>
+                @endauth
 
                 @auth
                     <x-dropdown align="right" width="48">
