@@ -19,6 +19,13 @@ class ProductController extends Controller
             $query->where('category_id', $request->category);
         }
 
+        // Filtrage par ville (via l'utilisateur/commerçant)
+        if ($request->filled('city')) {
+            $query->whereHas('user', function($q) use ($request) {
+                $q->where('city', $request->city);
+            });
+        }
+
         // Recherche par nom
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
@@ -89,8 +96,16 @@ class ProductController extends Controller
             ->where(function($q) use ($query) {
                 $q->where('name', 'like', '%' . $query . '%')
                   ->orWhere('description', 'like', '%' . $query . '%');
-            })
-            ->orderBy('created_at', 'desc')
+            });
+
+        // Filtrage par ville si spécifié
+        if ($request->filled('city')) {
+            $products->whereHas('user', function($q) use ($request) {
+                $q->where('city', $request->city);
+            });
+        }
+
+        $products = $products->orderBy('created_at', 'desc')
             ->paginate(12)
             ->withQueryString();
 

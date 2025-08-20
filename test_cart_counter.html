@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="csrf-token" content="test">
+    <title>Test Cart Counter</title>
+</head>
+<body>
+    <h1>Test du compteur de panier</h1>
+    
+    <!-- Desktop badge test -->
+    <div>
+        <h2>Desktop Badge</h2>
+        <div style="position: relative; display: inline-block; padding: 10px; background: #f0f0f0;">
+            <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l-2.5 5m0 0L17 18"/>
+            </svg>
+            <span id="cartCount" class="absolute -top-1 -right-1 bg-blue-600 text-white rounded-full text-xs font-medium px-1.5 py-0.5 min-w-[1.25rem] h-5 items-center justify-center hidden shadow-sm" style="position: absolute; top: -4px; right: -4px; background: #3b82f6; color: white; border-radius: 50%; font-size: 12px; padding: 2px 6px; min-width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">5</span>
+        </div>
+    </div>
+    
+    <!-- Mobile badge test -->
+    <div style="margin-top: 20px;">
+        <h2>Mobile Badge</h2>
+        <div style="position: relative; display: inline-block; padding: 10px; background: #f0f0f0;">
+            <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l-2.5 5m0 0L17 18"/>
+            </svg>
+            <span id="mobileCartCount" class="absolute -top-1 -right-1 bg-blue-600 text-white rounded-full text-xs px-1.5 py-0.5 min-w-[1.25rem] h-5 items-center justify-center hidden" style="position: absolute; top: -4px; right: -4px; background: #3b82f6; color: white; border-radius: 50%; font-size: 12px; padding: 2px 6px; min-width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">3</span>
+        </div>
+    </div>
+    
+    <div style="margin-top: 20px;">
+        <button onclick="testShowBadges()">Afficher les badges</button>
+        <button onclick="testHideBadges()">Masquer les badges</button>
+        <button onclick="testUpdateCartCount()">Test API updateCartCount</button>
+    </div>
+    
+    <script>
+        function testShowBadges() {
+            const cartBadge = document.getElementById('cartCount');
+            const mobileBadge = document.getElementById('mobileCartCount');
+            
+            if (cartBadge) {
+                cartBadge.textContent = '5';
+                cartBadge.classList.remove('hidden');
+                cartBadge.classList.add('flex');
+                cartBadge.style.display = 'flex';
+            }
+            
+            if (mobileBadge) {
+                mobileBadge.textContent = '3';
+                mobileBadge.classList.remove('hidden');
+                mobileBadge.classList.add('flex');
+                mobileBadge.style.display = 'flex';
+            }
+        }
+        
+        function testHideBadges() {
+            const cartBadge = document.getElementById('cartCount');
+            const mobileBadge = document.getElementById('mobileCartCount');
+            
+            if (cartBadge) {
+                cartBadge.classList.add('hidden');
+                cartBadge.classList.remove('flex');
+                cartBadge.style.display = 'none';
+            }
+            
+            if (mobileBadge) {
+                mobileBadge.classList.add('hidden');
+                mobileBadge.classList.remove('flex');
+                mobileBadge.style.display = 'none';
+            }
+        }
+        
+        function testUpdateCartCount() {
+            // Simuler une réponse API
+            const data = { count: 7 };
+            
+            console.log('Cart count received:', data.count);
+            
+            // Desktop cart badge
+            const cartBadge = document.getElementById('cartCount');
+            if (cartBadge) {
+                if (data.count > 0) {
+                    cartBadge.textContent = data.count;
+                    cartBadge.classList.remove('hidden');
+                    cartBadge.classList.add('flex');
+                    cartBadge.style.display = 'flex';
+                } else {
+                    cartBadge.classList.add('hidden');
+                    cartBadge.classList.remove('flex');
+                    cartBadge.style.display = 'none';
+                }
+            }
+            
+            // Mobile cart badge
+            const mobileCartCount = document.getElementById('mobileCartCount');
+            if (mobileCartCount) {
+                if (data.count > 0) {
+                    mobileCartCount.textContent = data.count > 99 ? '99+' : data.count;
+                    mobileCartCount.classList.remove('hidden');
+                    mobileCartCount.classList.add('flex');
+                    mobileCartCount.style.display = 'flex';
+                } else {
+                    mobileCartCount.classList.add('hidden');
+                    mobileCartCount.classList.remove('flex');
+                    mobileCartCount.style.display = 'none';
+                }
+            }
+        }
+        
+        // Initialiser avec badges visibles
+        setTimeout(testShowBadges, 100);
+    </script>
+</body>
+</html>

@@ -118,14 +118,20 @@ window.updateCartCount = function() {
     })
     .then(r => r.json())
     .then(data => {
+        console.log('Cart count received:', data.count); // Debug
+        
         // Desktop cart badge
         const cartBadge = document.getElementById('cartCount');
         if (cartBadge) {
             if (data.count > 0) {
                 cartBadge.textContent = data.count;
                 cartBadge.classList.remove('hidden');
+                cartBadge.classList.add('flex');
+                cartBadge.style.display = 'flex';
             } else {
                 cartBadge.classList.add('hidden');
+                cartBadge.classList.remove('flex');
+                cartBadge.style.display = 'none';
             }
         }
         
@@ -135,8 +141,12 @@ window.updateCartCount = function() {
             if (data.count > 0) {
                 mobileCartCount.textContent = data.count > 99 ? '99+' : data.count;
                 mobileCartCount.classList.remove('hidden');
+                mobileCartCount.classList.add('flex');
+                mobileCartCount.style.display = 'flex';
             } else {
                 mobileCartCount.classList.add('hidden');
+                mobileCartCount.classList.remove('flex');
+                mobileCartCount.style.display = 'none';
             }
         }
         
@@ -145,14 +155,17 @@ window.updateCartCount = function() {
             if (data.count > 0) {
                 bottomCartCount.textContent = data.count > 99 ? '99+' : data.count;
                 bottomCartCount.classList.remove('hidden');
+                bottomCartCount.classList.add('flex');
+                bottomCartCount.style.display = 'flex';
             } else {
                 bottomCartCount.classList.add('hidden');
+                bottomCartCount.classList.remove('flex');
+                bottomCartCount.style.display = 'none';
             }
         }
     })
-    .catch(() => {
-        // Fallback silencieux
-        console.debug('Could not fetch cart count');
+    .catch((error) => {
+        console.error('Error fetching cart count:', error); // Debug
     });
 }
 
@@ -250,6 +263,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialisation des compteurs
     updateNotifBadge();
     updateCartCount();
+    // Correction mobile : forcer la mise à jour après 500ms
+    setTimeout(updateCartCount, 500);
     
     // Mise à jour périodique
     setInterval(() => {

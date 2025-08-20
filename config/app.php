@@ -58,6 +58,9 @@ return [
 
     'asset_url' => env('ASSET_URL'),
 
+    // Permettre le choix du rôle à l'inscription
+    'role_signup_enabled' => env('ROLE_SIGNUP_ENABLED', false),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

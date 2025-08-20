@@ -104,10 +104,24 @@
                                     @foreach($order->orderItems->take(3) as $item)
                                         <div class="flex items-center space-x-4">
                                             <div class="flex-shrink-0">
-                                                <x-product-image :product="$item->product" size="small" class="w-12 h-12" />
+                                                @if($item->product)
+                                                    <x-product-image :product="$item->product" size="small" class="w-12 h-12" />
+                                                @else
+                                                    <div class="w-12 h-12 bg-gray-200 rounded flex items-center justify-center">
+                                                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                                                        </svg>
+                                                    </div>
+                                                @endif
                                             </div>
                                             <div class="flex-1 min-w-0">
-                                                <p class="text-sm font-medium text-gray-900">{{ $item->product->name }}</p>
+                                                <p class="text-sm font-medium text-gray-900">
+                                                    @if($item->product)
+                                                        {{ $item->product->name }}
+                                                    @else
+                                                        <span class="text-gray-500 italic">Produit supprimé</span>
+                                                    @endif
+                                                </p>
                                                 <p class="text-sm text-gray-500">
                                                     Quantité: {{ $item->quantity }} × {{ number_format($item->price, 0, ',', ' ') }} FCFA
                                                 </p>

@@ -158,6 +158,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::delete('/reviews/{review}/reject', [AdminController::class, 'rejectReview'])->name('reviews.reject');
     
     // Paramètres système
+    Route::get('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings');
+    Route::post('/settings/role-signup', [\App\Http\Controllers\Admin\SettingsController::class, 'updateRoleSignup'])->name('settings.role-signup');
     Route::get('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings/maintenance', [App\Http\Controllers\Admin\SettingsController::class, 'maintenance'])->name('settings.maintenance');
     Route::post('/settings/clear-cache', [App\Http\Controllers\Admin\SettingsController::class, 'clearCache'])->name('settings.clear-cache');

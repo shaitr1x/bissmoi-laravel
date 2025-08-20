@@ -22,6 +22,17 @@
         <input type="text" name="merchant_address" id="merchant_address" class="w-full border rounded p-2" value="{{ old('merchant_address') }}" required>
     </div>
     <div class="mb-4">
+        <label for="merchant_city" class="block font-semibold mb-1">Ville</label>
+        <select name="merchant_city" id="merchant_city" class="w-full border rounded p-2" required>
+            <option value="">Sélectionnez votre ville</option>
+            <option value="Yaoundé" {{ old('merchant_city') == 'Yaoundé' ? 'selected' : '' }}>Yaoundé</option>
+            <option value="Douala" {{ old('merchant_city') == 'Douala' ? 'selected' : '' }}>Douala</option>
+            <option value="Bertoua" {{ old('merchant_city') == 'Bertoua' ? 'selected' : '' }}>Bertoua</option>
+            <option value="Garoua" {{ old('merchant_city') == 'Garoua' ? 'selected' : '' }}>Garoua</option>
+            <option value="Ngaoundéré" {{ old('merchant_city') == 'Ngaoundéré' ? 'selected' : '' }}>Ngaoundéré</option>
+        </select>
+    </div>
+    <div class="mb-4">
         <label for="merchant_website" class="block font-semibold mb-1">Site web (optionnel)</label>
         <input type="url" name="merchant_website" id="merchant_website" class="w-full border rounded p-2" value="{{ old('merchant_website') }}">
     </div>

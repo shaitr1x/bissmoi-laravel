@@ -31,9 +31,11 @@ class BecomeMerchantController extends Controller
             'merchant_description' => 'required|string|max:1000',
             'merchant_phone' => 'required|string|max:20',
             'merchant_address' => 'required|string|max:255',
+            'merchant_city' => 'required|string|in:Yaoundé,Douala,Bertoua,Garoua,Ngaoundéré',
         ]);
         $user->update([
             'role' => 'merchant',
+            'city' => $request->merchant_city,
             'shop_name' => $request->shop_name,
             'merchant_description' => $request->merchant_description,
             'merchant_phone' => $request->merchant_phone,

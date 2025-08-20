@@ -41,7 +41,7 @@
                                 }
                                 if (is_array($images) && count($images) > 0) {
                                     $mainImage = asset('images/products/' . basename($images[0]));
-                                } elseif (!empty($product->image)) {
+                                } elseif (!empty($product->image) && is_string($product->image)) {
                                     $mainImage = asset('images/products/' . basename($product->image));
                                 } else {
                                     $mainImage = asset('images/default-product.svg');
@@ -66,9 +66,11 @@
                         @if(is_array($images) && count($images) > 0)
                             <div class="grid grid-cols-4 gap-2">
                                 @foreach($images as $image)
-                                    <img src="{{ asset('images/products/' . basename($image)) }}" alt="{{ $product->name }}" 
-                                         class="w-full h-20 object-cover rounded cursor-pointer border-2 border-transparent hover:border-blue-300"
-                                         onclick="changeMainImage('{{ asset('images/products/' . basename($image)) }}', this)">
+                                    @if(is_string($image))
+                                        <img src="{{ asset('images/products/' . basename($image)) }}" alt="{{ $product->name }}" 
+                                             class="w-full h-20 object-cover rounded cursor-pointer border-2 border-transparent hover:border-blue-300"
+                                             onclick="changeMainImage('{{ asset('images/products/' . basename($image)) }}', this)">
+                                    @endif
                                 @endforeach
                             </div>
                         @endif
@@ -125,7 +127,6 @@
                                 <form action="{{ route('cart.store') }}" method="POST" class="mb-6">
                                     @csrf
                                     <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                    
                                     <div class="flex items-center space-x-4 mb-4">
                                         <label for="quantity" class="text-sm font-medium text-gray-700">Quantité:</label>
                                         <select name="quantity" id="quantity" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
@@ -134,9 +135,8 @@
                                             @endfor
                                         </select>
                                     </div>
-
                                     <div class="flex space-x-4">
-                                        <button type="submit" class="flex-1 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150">
+                                        <button type="submit" class="flex-1 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150" id="addToCartBtn">
                                             <svg class="inline-block w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l-2.5 5m0 0L17 18m0 0v0a1.5 1.5 0 01-3 0v0m3 0a1.5 1.5 0 01-3 0m0 0H9m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v9.5z"/>
                                             </svg>
@@ -349,6 +349,7 @@
         }
 
         function changeMainImage(imageSrc, thumbnail) {
+    // ...rien, retour au comportement classique
             document.getElementById('mainImage').src = imageSrc;
             
             // Retirer la bordure de toutes les miniatures
@@ -361,5 +362,12 @@
             thumbnail.classList.remove('border-transparent');
             thumbnail.classList.add('border-blue-500');
         }
+
+        // Mettre à jour le compteur de panier après ajout
+        @if(session('success') && str_contains(session('success'), 'panier'))
+            if (typeof window.updateCartCount === 'function') {
+                window.updateCartCount();
+            }
+        @endif
     </script>
 </x-app-layout>

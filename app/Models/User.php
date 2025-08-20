@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'city',
         'merchant_approved',
         'is_verified_merchant',
         'merchant_description',

@@ -24,10 +24,11 @@
 
                             <div>
                                 <label for="phone" class="block text-sm font-medium text-gray-700">Numéro de téléphone</label>
-                                <input type="tel" name="phone" id="phone" 
-                                       value="{{ old('phone', Auth::user()->merchant_phone) }}"
-                                       class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                                       required placeholder="Votre numéro de téléphone">
+                    <input type="tel" name="phone" id="phone" 
+                        value="{{ old('phone', Auth::user()->merchant_phone) }}"
+                        class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
+                        required placeholder="Votre numéro de téléphone"
+                        pattern="^\\d{9}$" maxlength="9" title="Le numéro doit contenir exactement 9 chiffres">
                                 @error('phone')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror

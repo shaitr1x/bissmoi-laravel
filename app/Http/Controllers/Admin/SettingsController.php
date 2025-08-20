@@ -25,9 +25,28 @@ class SettingsController extends Controller
             'cache_status' => Cache::has('system_status'),
             'storage_usage' => $this->getStorageUsage(),
             'recent_backups' => $this->getRecentBackups(),
+            'role_signup_enabled' => config('app.role_signup_enabled'),
         ];
-
         return view('admin.settings.index', compact('settings'));
+    }
+    // Ajout de la méthode pour gérer le paramètre rôle à l'inscription
+    public function updateRoleSignup(Request $request)
+    {
+        $enabled = $request->has('role_signup_enabled') ? 'true' : 'false';
+        // Met à jour le fichier .env
+        $envPath = base_path('.env');
+        if (file_exists($envPath)) {
+            $envContent = file_get_contents($envPath);
+            if (preg_match('/^ROLE_SIGNUP_ENABLED=.*/m', $envContent)) {
+                $envContent = preg_replace('/^ROLE_SIGNUP_ENABLED=.*/m', 'ROLE_SIGNUP_ENABLED=' . $enabled, $envContent);
+            } else {
+                $envContent .= "\nROLE_SIGNUP_ENABLED=" . $enabled;
+            }
+            file_put_contents($envPath, $envContent);
+        }
+        // Vide le cache config pour prendre en compte la modif
+        Artisan::call('config:clear');
+        return back()->with('success', 'Paramètre mis à jour !');
     }
 
     public function maintenance(Request $request)

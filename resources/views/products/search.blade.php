@@ -11,11 +11,19 @@
                     
                     <!-- Barre de recherche -->
                     <div class="mt-4 md:mt-0 md:ml-6">
-                        <form action="{{ route('products.search') }}" method="GET" class="flex">
+                        <form action="{{ route('products.search') }}" method="GET" class="flex flex-col md:flex-row gap-2">
                             <input type="text" name="q" placeholder="Rechercher un produit..." 
                                    value="{{ $query }}"
-                                   class="w-full md:w-64 px-4 py-2 border border-gray-300 rounded-l-md focus:ring-blue-500 focus:border-blue-500">
-                            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-r-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                   class="w-full md:w-64 px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                            <select name="city" class="px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500">
+                                <option value="">Toutes les villes</option>
+                                <option value="Yaoundé" {{ request('city') == 'Yaoundé' ? 'selected' : '' }}>Yaoundé</option>
+                                <option value="Douala" {{ request('city') == 'Douala' ? 'selected' : '' }}>Douala</option>
+                                <option value="Bertoua" {{ request('city') == 'Bertoua' ? 'selected' : '' }}>Bertoua</option>
+                                <option value="Garoua" {{ request('city') == 'Garoua' ? 'selected' : '' }}>Garoua</option>
+                                <option value="Ngaoundéré" {{ request('city') == 'Ngaoundéré' ? 'selected' : '' }}>Ngaoundéré</option>
+                            </select>
+                            <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
                                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                 </svg>
@@ -135,4 +143,13 @@
             @endif
         </div>
     </div>
+
+    <script>
+        // Mettre à jour le compteur de panier après ajout
+        @if(session('success') && str_contains(session('success'), 'panier'))
+            if (typeof window.updateCartCount === 'function') {
+                window.updateCartCount();
+            }
+        @endif
+    </script>
 </x-app-layout>

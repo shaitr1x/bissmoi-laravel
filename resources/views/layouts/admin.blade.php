@@ -23,28 +23,32 @@
 <body class="font-sans antialiased">
     <div class="min-h-screen bg-gray-100">
         <!-- Navigation -->
-        <nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+        <nav x-data="{ open: false }" class="bg-white border-b border-gray-200 shadow-sm">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center w-full">
-                        <!-- Logo -->
-                        <div class="shrink-0 flex items-center">
-                            <a href="{{ route('admin.dashboard') }}" class="text-xl font-bold text-gray-800">
-                                <img src="{{ asset('images/logo-bissmoi.svg') }}" alt="BISSMOI" class="h-10 w-auto mr-2" style="max-height: 40px;">
+                        <!-- Logo et titre à l'extrême gauche -->
+                        <div class="shrink-0 flex items-center absolute left-0 pl-0 ml-0">
+                            <a href="{{ route('admin.dashboard') }}" class="flex items-center">
+                                <img src="{{ asset('images/logo-bissmoi.svg') }}" alt="BISSMOI" class="h-10 w-auto mr-3" style="max-height: 40px;">
+                                <div>
+                                    <span class="text-xl font-bold text-gray-800">Bissmoi</span>
+                                    <span class="block text-xs text-purple-600 font-semibold">Administration</span>
+                                </div>
                             </a>
                         </div>
 
                         <!-- Navigation Links -->
-                        <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                        <nav class="flex gap-2 ml-8">
-                            <div class="flex gap-2">
-                                <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                        <div class="hidden space-x-6 sm:-my-px sm:ml-10 sm:flex">
+                        <nav class="flex gap-4 ml-8">
+                            <div class="flex gap-4">
+                                <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')" class="text-gray-600 hover:text-purple-700 border-transparent hover:border-purple-300 font-medium">
                                     Dashboard
                                 </x-nav-link>
-                                <x-nav-link :href="route('admin.analytics')" :active="request()->routeIs('admin.analytics')">
+                                <x-nav-link :href="route('admin.analytics')" :active="request()->routeIs('admin.analytics')" class="text-gray-600 hover:text-purple-700 border-transparent hover:border-purple-300 font-medium">
                                     Analytics
                                 </x-nav-link>
-                                <x-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')">
+                                <x-nav-link :href="route('admin.categories.index')" :active="request()->routeIs('admin.categories.*')" class="text-gray-600 hover:text-purple-700 border-transparent hover:border-purple-300 font-medium">
                                     Catégories
                                 </x-nav-link>
                                 @php
@@ -54,26 +58,26 @@
                                     $pendingMerchantsCount = \App\Models\User::where('role', 'merchant')->where('merchant_approved', false)->count();
                                     $newUsersCount = \App\Models\User::where('is_active', false)->count();
                                 @endphp
-                                <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.*')" class="relative">
+                                <x-nav-link :href="route('admin.products.index')" :active="request()->routeIs('admin.products.*')" class="relative text-gray-600 hover:text-purple-700 border-transparent hover:border-purple-300 font-medium">
                                     Produits
                                     @if($pendingProductsCount > 0)
-                                        <span class="absolute -top-2 -right-3 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                                        <span class="absolute -top-1 -right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-500 rounded-full shadow-sm">
                                             {{ $pendingProductsCount > 99 ? '99+' : $pendingProductsCount }}
                                         </span>
                                     @endif
                                 </x-nav-link>
-                                <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')" class="relative">
+                                <x-nav-link :href="route('admin.orders.index')" :active="request()->routeIs('admin.orders.*')" class="relative text-gray-600 hover:text-purple-700 border-transparent hover:border-purple-300 font-medium">
                                     Commandes
                                     @if($pendingOrdersCount > 0)
-                                        <span class="absolute -top-2 -right-3 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                                        <span class="absolute -top-1 -right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-500 rounded-full shadow-sm">
                                             {{ $pendingOrdersCount > 99 ? '99+' : $pendingOrdersCount }}
                                         </span>
                                     @endif
                                 </x-nav-link>
-                                <x-nav-link :href="route('admin.merchants')" :active="request()->routeIs('admin.merchants*')" class="relative">
+                                <x-nav-link :href="route('admin.merchants')" :active="request()->routeIs('admin.merchants*')" class="relative text-gray-600 hover:text-purple-700 border-transparent hover:border-purple-300 font-medium">
                                     Commerçants
                                     @if($pendingMerchantsCount > 0)
-                                        <span class="absolute -top-2 -right-3 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                                        <span class="absolute -top-1 -right-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-500 rounded-full shadow-sm">
                                             {{ $pendingMerchantsCount > 99 ? '99+' : $pendingMerchantsCount }}
                                         </span>
                                     @endif
@@ -125,10 +129,17 @@
 
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">
-                                <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                    <div>{{ Auth::user()->name }}</div>
+                                <button class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition ease-in-out duration-150">
+                                    <div class="flex items-center">
+                                        <div class="w-6 h-6 bg-purple-200 rounded-full flex items-center justify-center mr-2">
+                                            <span class="text-xs font-medium text-purple-700">
+                                                {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                                            </span>
+                                        </div>
+                                        {{ Auth::user()->name }}
+                                    </div>
 
-                                    <div class="ml-1">
+                                    <div class="ml-2">
                                         <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                             <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                         </svg>
@@ -137,19 +148,30 @@
                             </x-slot>
 
                             <x-slot name="content">
-                                <x-dropdown-link :href="route('home')">
+                                <x-dropdown-link :href="route('home')" class="flex items-center">
+                                    <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0 9c-5 0-9-4-9-9m9 9c5 0 9-4 9-9m-9-9v9"/>
+                                    </svg>
                                     {{ __('Voir le site') }}
                                 </x-dropdown-link>
-                                <x-dropdown-link :href="route('profile.edit')">
+                                <x-dropdown-link :href="route('profile.edit')" class="flex items-center">
+                                    <svg class="w-4 h-4 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
                                     {{ __('Profile') }}
                                 </x-dropdown-link>
 
                                 <!-- Authentication -->
+                                <hr class="my-1">
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <x-dropdown-link :href="route('logout')"
                                             onclick="event.preventDefault();
-                                                        this.closest('form').submit();">
+                                                        this.closest('form').submit();"
+                                            class="flex items-center text-red-600 hover:bg-red-50">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                        </svg>
                                         {{ __('Se déconnecter') }}
                                     </x-dropdown-link>
                                 </form>

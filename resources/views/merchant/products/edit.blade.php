@@ -78,7 +78,7 @@
                         <div class="flex gap-2 flex-wrap">
                             @foreach($images as $img)
                                 <div class="relative group">
-                                    <img src="{{ asset('storage/' . $img) }}" alt="Image" class="w-24 h-24 object-cover rounded border">
+                                    <img src="{{ asset($img) }}" alt="Image" class="w-24 h-24 object-cover rounded border">
                                     <!-- Option de suppression (à implémenter côté backend si besoin) -->
                                 </div>
                             @endforeach

@@ -34,7 +34,6 @@ class Product extends Model
         'weight' => 'decimal:2',
         'manage_stock' => 'boolean',
         'featured' => 'boolean',
-        'images' => 'array',
     ];
 
     // Auto-generate slug from name
@@ -91,16 +90,30 @@ class Product extends Model
         return $this->reviews()->where('approved', true)->count();
     }
 
+    // Nettoyer les images (enlever les éléments vides/non-string)
+    public function getImagesAttribute($value)
+    {
+        if (is_string($value)) {
+            $images = json_decode($value, true) ?: [];
+        } else {
+            $images = $value ?: [];
+        }
+        
+        // Filtrer les éléments non-string ou vides
+        if (is_array($images)) {
+            $images = array_filter($images, function($img) {
+                return is_string($img) && !empty($img);
+            });
+            return array_values($images); // Réindexer le tableau
+        }
+        
+        return [];
+    }
 
     // Obtenir l'image principale du produit
     public function getImageAttribute()
     {
-        $images = $this->images;
-        // S'assurer que c'est un tableau
-        if (is_string($images)) {
-            $images = json_decode($images, true);
-        }
-        // Cas champ images (array)
+        $images = $this->images; // Utilise l'accessor getImagesAttribute qui nettoie déjà
         if (is_array($images) && count($images) > 0) {
             return $images[0];
         }
@@ -110,16 +123,17 @@ class Product extends Model
     // Obtenir l'URL complète de l'image principale
     public function getImageUrlAttribute()
     {
-        if ($this->image) {
+        $image = $this->image;
+        if ($image && is_string($image)) {
             // Si c'est déjà un chemin complet depuis images/
-            if (str_starts_with($this->image, 'images/')) {
-                $publicPath = public_path($this->image);
+            if (str_starts_with($image, 'images/')) {
+                $publicPath = public_path($image);
                 if (file_exists($publicPath)) {
-                    return asset($this->image);
+                    return asset($image);
                 }
             } else {
                 // Sinon, c'est juste un nom de fichier, on cherche dans images/products/
-                $filename = basename($this->image);
+                $filename = basename($image);
                 $publicPath = public_path('images/products/' . $filename);
                 if (file_exists($publicPath)) {
                     return asset('images/products/' . $filename);

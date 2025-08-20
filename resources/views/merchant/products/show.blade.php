@@ -11,19 +11,39 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <!-- Images -->
                     <div>
-                        <x-product-image :product="$product" size="xl" />
-                        @php
-                            $images = $product->images;
-                            if (is_string($images)) {
-                                $images = json_decode($images, true) ?: [];
-                            }
-                        @endphp
+                        <div class="aspect-w-4 aspect-h-3 mb-4">
+                            @php
+                                $mainImage = null;
+                                $images = $product->images;
+                                if (is_string($images)) {
+                                    $images = json_decode($images, true) ?: [];
+                                }
+                                if (is_array($images) && count($images) > 0) {
+                                    $mainImage = asset($images[0]);
+                                } else {
+                                    $mainImage = asset('images/default-product.svg');
+                                }
+                            @endphp
+                            <img id="mainImage" src="{{ $mainImage }}" alt="{{ $product->name }}" class="w-full h-96 object-cover rounded-lg">
+                        </div>
+                        
                         @if(is_array($images) && count($images) > 1)
-                            <div class="flex gap-2 mt-4">
-                                @foreach(array_slice($images, 1) as $img)
-                                    <img src="{{ asset('storage/' . $img) }}" alt="{{ $product->name }}" class="w-20 h-20 object-cover rounded border">
+                            <div class="grid grid-cols-4 gap-2 mt-4">
+                                @foreach($images as $img)
+                                    <img src="{{ asset($img) }}" alt="{{ $product->name }}" 
+                                         class="w-full h-20 object-cover rounded cursor-pointer border-2 border-transparent hover:border-blue-300"
+                                         onclick="changeMainImage('{{ asset($img) }}', this)">
                                 @endforeach
                             </div>
+                            <script>
+                                function changeMainImage(imageSrc, thumbnail) {
+                                    document.getElementById('mainImage').src = imageSrc;
+                                    // Retirer la bordure de toutes les miniatures
+                                    document.querySelectorAll('.grid img').forEach(img => img.classList.remove('border-blue-300'));
+                                    // Ajouter la bordure à la miniature cliquée
+                                    thumbnail.classList.add('border-blue-300');
+                                }
+                            </script>
                         @endif
                     </div>
                     <!-- Infos produit -->

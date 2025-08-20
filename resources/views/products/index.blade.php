@@ -79,6 +79,20 @@
                                 </div>
                             </div>
 
+                            <!-- Ville -->
+                            <div class="mb-6">
+                                <h4 class="font-medium text-gray-900 mb-3">Ville</h4>
+                                <select name="city" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                        onchange="document.getElementById('filterForm').submit()">
+                                    <option value="" {{ !request('city') ? 'selected' : '' }}>Toutes les villes</option>
+                                    <option value="Yaoundé" {{ request('city') == 'Yaoundé' ? 'selected' : '' }}>Yaoundé</option>
+                                    <option value="Douala" {{ request('city') == 'Douala' ? 'selected' : '' }}>Douala</option>
+                                    <option value="Bertoua" {{ request('city') == 'Bertoua' ? 'selected' : '' }}>Bertoua</option>
+                                    <option value="Garoua" {{ request('city') == 'Garoua' ? 'selected' : '' }}>Garoua</option>
+                                    <option value="Ngaoundéré" {{ request('city') == 'Ngaoundéré' ? 'selected' : '' }}>Ngaoundéré</option>
+                                </select>
+                            </div>
+
                             <!-- Tri -->
                             <div class="mb-6">
                                 <h4 class="font-medium text-gray-900 mb-3">Trier par</h4>
@@ -193,5 +207,12 @@
         function clearFilters() {
             window.location.href = '{{ route("products.index") }}';
         }
+
+        // Mettre à jour le compteur de panier après ajout
+        @if(session('success') && str_contains(session('success'), 'panier'))
+            if (typeof window.updateCartCount === 'function') {
+                window.updateCartCount();
+            }
+        @endif
     </script>
 </x-app-layout>

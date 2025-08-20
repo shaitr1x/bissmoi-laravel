@@ -7,9 +7,9 @@ use App\Models\OrderItem;
 use App\Models\Cart;
 use App\Models\Product;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Services\NotificationService;
 
 class OrderController extends Controller
 {
@@ -105,8 +105,10 @@ class OrderController extends Controller
     {
         $request->validate([
             'delivery_address' => 'required|string|max:500',
-            'phone' => 'required|string|max:20',
+            'phone' => ['required', 'regex:/^\d{9}$/'],
             'notes' => 'nullable|string|max:1000'
+        ], [
+            'phone.regex' => 'Le numéro de téléphone doit contenir exactement 9 chiffres.'
         ]);
 
         $cartItems = Cart::with('product')
@@ -166,6 +168,20 @@ class OrderController extends Controller
 
             // Mettre à jour le total de la commande
             $order->update(['total_amount' => $total]);
+
+            // Notifier le commerçant de la nouvelle commande
+            if ($merchantId) {
+                NotificationService::sendToUser(
+                    $merchantId,
+                    'Nouvelle commande reçue',
+                    "Vous avez reçu une nouvelle commande #{$order->order_number} d'un montant de " . number_format($total, 2) . " €. Consultez vos commandes pour plus de détails.",
+                    'success',
+                    'shopping-bag',
+                    url('/merchant/orders'),
+                    'Voir mes commandes',
+                    true // Envoyer email
+                );
+            }
 
             // Vider le panier
             Cart::where('user_id', Auth::id())->delete();

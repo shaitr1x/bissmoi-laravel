@@ -30,12 +30,28 @@
                     fetch('{{ route("cart.count") }}')
                         .then(response => response.json())
                         .then(data => {
+                            // Desktop
                             const cartCountEl = document.getElementById('cartCount');
-                            if (data.count > 0) {
-                                cartCountEl.textContent = data.count;
-                                cartCountEl.classList.remove('hidden');
-                            } else {
-                                cartCountEl.classList.add('hidden');
+                            if (cartCountEl) {
+                                if (data.count > 0) {
+                                    cartCountEl.textContent = data.count;
+                                    cartCountEl.classList.remove('hidden');
+                                } else {
+                                    cartCountEl.classList.add('hidden');
+                                }
+                            }
+
+                            // Mobile bottom nav
+                            const bottomCartCount = document.getElementById('bottomCartCount');
+                            if (bottomCartCount) {
+                                if (data.count > 0) {
+                                    bottomCartCount.textContent = data.count > 99 ? '99+' : data.count;
+                                    bottomCartCount.classList.remove('hidden');
+                                    bottomCartCount.style.display = 'flex';
+                                } else {
+                                    bottomCartCount.classList.add('hidden');
+                                    bottomCartCount.style.display = 'none';
+                                }
                             }
                         })
                         .catch(error => console.error('Erreur:', error));
