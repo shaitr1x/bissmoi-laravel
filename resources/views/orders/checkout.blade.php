@@ -27,7 +27,7 @@
                     <input type="tel" name="phone" id="phone" 
                         value="{{ old('phone', Auth::user()->merchant_phone) }}"
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                        required placeholder="Exemple: 123456789"
+                        required
                         pattern="^\\d{9}$" maxlength="9" title="Le numéro doit contenir exactement 9 chiffres"
                         oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,9)">
                                 @error('phone')
