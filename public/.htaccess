@@ -5,6 +5,14 @@
 
     RewriteEngine On
 
+    # Redirige vers www
+    RewriteCond %{HTTP_HOST} ^bissmoi\.com$ [NC]
+    RewriteRule ^(.*)$ https://www.bissmoi.com/$1 [R=301,L]
+
+    # Force HTTPS
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
