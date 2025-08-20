@@ -58,27 +58,28 @@
                 <h2 class="text-3xl font-bold text-center mb-12">Produits en Vedette</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     @foreach($featuredProducts as $product)
-                        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
-                            <div class="h-48 overflow-hidden flex items-center justify-center bg-gray-100">
-                                @if($product->stock_quantity > 0)
+                        @if($product->stock_quantity > 0)
+                            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition">
+                                <div class="h-48 overflow-hidden flex items-center justify-center bg-gray-100">
                                     <x-product-image :product="$product" size="large" class="h-48" />
-                                    <h3 class="font-semibold text-lg mb-2">{{ $product->name }}</h3>
-                                    <p class="text-gray-600 text-sm mb-3">{{ Str::limit($product->short_description, 50) }}</p>
-                                    <div class="flex justify-between items-center">
-                                        <div>
-                                            @if($product->sale_price)
-                                                <span class="text-lg font-bold text-red-600">{{ number_format($product->sale_price, 2) }} FCFA</span>
-                                                <span class="text-sm text-gray-500 line-through ml-1">{{ number_format($product->price, 2) }} FCFA</span>
-                                            @else
-                                                <span class="text-lg font-bold text-gray-900">{{ number_format($product->price, 2) }} FCFA</span>
-                                            @endif
-                                        </div>
-                                        <a href="{{ route('products.show', $product) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                            Voir détails
-                                        </a>
+                                </div>
+                                <h3 class="font-semibold text-lg mb-2">{{ $product->name }}</h3>
+                                <p class="text-gray-600 text-sm mb-3">{{ Str::limit($product->short_description, 50) }}</p>
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        @if($product->sale_price)
+                                            <span class="text-lg font-bold text-red-600">{{ number_format($product->sale_price, 2) }} FCFA</span>
+                                            <span class="text-sm text-gray-500 line-through ml-1">{{ number_format($product->price, 2) }} FCFA</span>
+                                        @else
+                                            <span class="text-lg font-bold text-gray-900">{{ number_format($product->price, 2) }} FCFA</span>
+                                        @endif
                                     </div>
-                                @endif
+                                    <a href="{{ route('products.show', $product) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                        Voir détails
+                                    </a>
+                                </div>
                             </div>
+                        @endif
                             <div class="p-4">
                                 <h3 class="font-semibold text-lg mb-2">{{ $product->name }}</h3>
                                 <p class="text-gray-600 text-sm mb-3">{{ Str::limit($product->short_description, 50) }}</p>
@@ -110,27 +111,28 @@
                 <h2 class="text-3xl font-bold text-center mb-12">Derniers Produits</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     @foreach($latestProducts->take(8) as $product)
-                        <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition flex flex-col h-full">
-                            <div class="h-48 overflow-hidden flex items-center justify-center bg-gray-50">
-                                @if($product->stock_quantity > 0)
+                        @if($product->stock_quantity > 0)
+                            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition flex flex-col h-full">
+                                <div class="h-48 overflow-hidden flex items-center justify-center bg-gray-50">
                                     <x-product-image :product="$product" size="large" class="object-contain h-44 w-full" />
-                                    <h3 class="font-semibold text-lg mb-2 line-clamp-2">{{ $product->name }}</h3>
-                                    <p class="text-gray-600 text-sm mb-3 flex-1">{{ Str::limit($product->description, 80) }}</p>
-                                    <div class="flex justify-between items-end mt-2">
-                                        <div>
-                                            @if($product->sale_price)
-                                                <span class="text-lg font-bold text-green-600">{{ number_format($product->sale_price, 0, ',', ' ') }} FCFA</span>
-                                                <span class="text-sm text-gray-500 line-through ml-1">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
-                                            @else
-                                                <span class="text-lg font-bold text-gray-900">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
-                                            @endif
-                                        </div>
-                                        <a href="{{ route('products.show', $product) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                            Voir détails
-                                        </a>
+                                </div>
+                                <h3 class="font-semibold text-lg mb-2 line-clamp-2">{{ $product->name }}</h3>
+                                <p class="text-gray-600 text-sm mb-3 flex-1">{{ Str::limit($product->description, 80) }}</p>
+                                <div class="flex justify-between items-end mt-2">
+                                    <div>
+                                        @if($product->sale_price)
+                                            <span class="text-lg font-bold text-green-600">{{ number_format($product->sale_price, 0, ',', ' ') }} FCFA</span>
+                                            <span class="text-sm text-gray-500 line-through ml-1">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
+                                        @else
+                                            <span class="text-lg font-bold text-gray-900">{{ number_format($product->price, 0, ',', ' ') }} FCFA</span>
+                                        @endif
                                     </div>
-                                @endif
+                                    <a href="{{ route('products.show', $product) }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                                        Voir détails
+                                    </a>
+                                </div>
                             </div>
+                        @endif
                             <div class="p-4 flex flex-col flex-1">
                                 <h3 class="font-semibold text-lg mb-2 line-clamp-2">{{ $product->name }}</h3>
                                 <p class="text-gray-600 text-sm mb-3 flex-1">{{ Str::limit($product->description, 80) }}</p>
