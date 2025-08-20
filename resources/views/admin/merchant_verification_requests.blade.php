@@ -1,8 +1,8 @@
-@extends('layouts.admin')
 
+@extends('layouts.admin')
+    
 @section('slot')
 <div class="container mx-auto py-6">
-    
     <h1 class="text-2xl font-bold mb-4">Demandes de vérification des marchands</h1>
 
     @if(session('success'))
