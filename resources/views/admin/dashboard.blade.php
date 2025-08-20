@@ -93,7 +93,7 @@
                                 <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
                                     <div>
                                         <p class="font-medium">#{{ $order->order_number }}</p>
-                                        <p class="text-sm text-gray-600">{{ $order->user->shop_name ?? $order->user->name }}</p>
+                                        <p class="text-sm text-gray-600">{{ $order->user?->shop_name ?? $order->user?->name ?? 'Utilisateur inconnu' }}</p>
                                     </div>
                                     <div class="text-right">
                                         <p class="font-medium">{{ number_format($order->total_amount, 2) }} FCFA</p>
@@ -118,7 +118,7 @@
                                 <div class="flex items-center justify-between p-3 bg-gray-50 rounded">
                                     <div>
                                         <p class="font-medium">{{ $product->name }}</p>
-                                        <p class="text-sm text-gray-600">par {{ $product->user->shop_name ?? $product->user->name }}</p>
+                                        <p class="text-sm text-gray-600">par {{ $product->user?->shop_name ?? $product->user?->name ?? 'Utilisateur inconnu' }}</p>
                                     </div>
                                     <div class="text-right">
                                         <p class="font-medium">{{ number_format($product->price, 2) }} FCFA</p>
