@@ -143,13 +143,13 @@
                                         <div class="flex-shrink-0 h-8 w-8">
                                             <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
                                                 <span class="text-xs font-medium text-gray-600">
-                                                    {{ strtoupper(substr($order->user->name, 0, 2)) }}
+                                                    {{ strtoupper(substr($order->user?->name ?? '??', 0, 2)) }}
                                                 </span>
                                             </div>
                                         </div>
                                         <div class="ml-3">
-                                            <div class="text-sm font-medium text-gray-900">{{ $order->user->name }}</div>
-                                            <div class="text-sm text-gray-500">{{ $order->user->email }}</div>
+                                            <div class="text-sm font-medium text-gray-900">{{ $order->user?->name ?? 'Utilisateur inconnu' }}</div>
+                                            <div class="text-sm text-gray-500">{{ $order->user?->email ?? '' }}</div>
                                         </div>
                                     </div>
                                 </td>
