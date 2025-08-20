@@ -5,10 +5,20 @@
 
     RewriteEngine On
 
+<<<<<<< HEAD
     # Force HTTPS sur OVH
     RewriteCond %{HTTPS} !=on
     RewriteCond %{HTTP:X-Forwarded-Proto} !https
     RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+=======
+    # Redirige vers www
+    RewriteCond %{HTTP_HOST} ^bissmoi\.com$ [NC]
+    RewriteRule ^(.*)$ https://www.bissmoi.com/$1 [R=301,L]
+
+    # Force HTTPS
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+>>>>>>> 39517520b3aa43d9af236fc6d57284fbbc1d9b36
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
