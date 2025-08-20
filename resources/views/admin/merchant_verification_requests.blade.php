@@ -2,6 +2,7 @@
 
 @section('slot')
 <div class="container mx-auto py-6">
+    <pre class="bg-gray-100 p-2 text-xs text-gray-700 mb-4">{{ var_dump($requests) }}</pre>
     <h1 class="text-2xl font-bold mb-4">Demandes de vérification des marchands</h1>
 
     @if(session('success'))
