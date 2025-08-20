@@ -11,7 +11,6 @@ class HomeController extends Controller
     public function index()
     {
         $featuredProducts = Product::active()
-            ->inStock()
             ->featured()
             ->with(['category', 'user', 'reviews'])
             ->take(8)
@@ -24,7 +23,7 @@ class HomeController extends Controller
             ->get();
 
         $latestProducts = Product::active()
-            ->inStock()
+            ->where('stock_quantity', '>', 0)
             ->with(['category', 'user', 'reviews'])
             ->latest()
             ->take(12)
