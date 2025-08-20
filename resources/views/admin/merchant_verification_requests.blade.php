@@ -2,30 +2,6 @@
 
 @section('slot')
 <div class="container mx-auto py-6">
-    <!-- DEBUG SECTION START -->
-    <div class="bg-yellow-100 border border-yellow-400 p-4 mb-4 rounded">
-        <h3 class="font-bold text-yellow-800">DEBUG INFO:</h3>
-        <p><strong>Variable $requests existe:</strong> {{ isset($requests) ? 'OUI' : 'NON' }}</p>
-        @if(isset($requests))
-            <p><strong>Type:</strong> {{ gettype($requests) }}</p>
-            <p><strong>Nombre d'éléments:</strong> {{ is_countable($requests) ? count($requests) : 'Non comptable' }}</p>
-            @if(count($requests) > 0)
-                <p><strong>Premier élément:</strong></p>
-                <pre class="bg-gray-100 p-2 text-xs">{{ json_encode($requests->first(), JSON_PRETTY_PRINT) }}</pre>
-            @else
-                <p class="text-red-600"><strong>Aucun élément dans $requests</strong></p>
-            @endif
-        @endif
-        
-        <p><strong>Vérification DB directe:</strong></p>
-        @php
-            $dbCount = \App\Models\MerchantVerificationRequest::count();
-            $pendingCount = \App\Models\MerchantVerificationRequest::where('status', 'pending')->count();
-        @endphp
-        <p>Total en base: {{ $dbCount }}</p>
-        <p>En attente: {{ $pendingCount }}</p>
-    </div>
-    <!-- DEBUG SECTION END -->
     
     <h1 class="text-2xl font-bold mb-4">Demandes de vérification des marchands</h1>
 
