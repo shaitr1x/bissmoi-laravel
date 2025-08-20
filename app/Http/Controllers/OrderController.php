@@ -103,6 +103,10 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
+        // Nettoyer le numéro de téléphone (supprimer espaces et caractères non numériques)
+        $phone = preg_replace('/[^0-9]/', '', $request->phone);
+        $request->merge(['phone' => $phone]);
+        
         $request->validate([
             'delivery_address' => 'required|string|max:500',
             'phone' => ['required', 'regex:/^\d{9}$/'],

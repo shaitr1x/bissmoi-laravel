@@ -27,8 +27,9 @@
                     <input type="tel" name="phone" id="phone" 
                         value="{{ old('phone', Auth::user()->merchant_phone) }}"
                         class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
-                        required placeholder="Votre numéro de téléphone"
-                        pattern="^\\d{9}$" maxlength="9" title="Le numéro doit contenir exactement 9 chiffres">
+                        required placeholder="Exemple: 123456789"
+                        pattern="^\\d{9}$" maxlength="9" title="Le numéro doit contenir exactement 9 chiffres"
+                        oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0,9)">
                                 @error('phone')
                                     <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                 @enderror
@@ -134,4 +135,43 @@
             </div>
         </div>
     </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const phoneInput = document.getElementById('phone');
+        const form = phoneInput.closest('form');
+        
+        phoneInput.addEventListener('input', function() {
+            // Supprimer tous les caractères non numériques
+            let value = this.value.replace(/[^0-9]/g, '');
+            
+            // Limiter à 9 chiffres
+            if (value.length > 9) {
+                value = value.slice(0, 9);
+            }
+            
+            this.value = value;
+            
+            // Feedback visuel
+            if (value.length === 9) {
+                this.style.borderColor = '#10b981'; // Vert
+                this.style.backgroundColor = '#f0fdf4';
+            } else {
+                this.style.borderColor = '#d1d5db'; // Gris par défaut
+                this.style.backgroundColor = '';
+            }
+        });
+        
+        // Validation avant soumission
+        form.addEventListener('submit', function(e) {
+            const phoneValue = phoneInput.value.trim();
+            if (!/^\d{9}$/.test(phoneValue)) {
+                e.preventDefault();
+                alert('Le numéro de téléphone doit contenir exactement 9 chiffres.');
+                phoneInput.focus();
+                return false;
+            }
+        });
+    });
+    </script>
 </x-app-layout>
