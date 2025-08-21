@@ -136,6 +136,25 @@
                                 Télécharger le sitemap
                             </a>
                         </div>
+                        <!-- Emailing admin -->
+                        <div class="border rounded-lg p-4">
+                            <div class="flex items-center mb-3">
+                                <div class="p-2 bg-green-100 rounded-lg">
+                                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12v1m0 4v1m-8-5v1m0 4v1m8-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <h4 class="text-sm font-medium text-gray-900">Emailing commerçants</h4>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-3">
+                                Envoyez un email à tous les commerçants inscrits sur la plateforme.
+                            </p>
+                            <a href="{{ route('admin.emailing') }}" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest bg-green-600 hover:bg-green-700">
+                                Accéder à l'emailing
+                            </a>
+                        </div>
                     <div class="border rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center">
