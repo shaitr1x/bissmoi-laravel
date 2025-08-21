@@ -173,19 +173,27 @@ class OrderController extends Controller
             // Mettre à jour le total de la commande
             $order->update(['total_amount' => $total]);
 
-            // Notifier le commerçant de la nouvelle commande
-            if ($merchantId) {
-                NotificationService::sendToUser(
-                    $merchantId,
-                    'Nouvelle commande reçue',
-                    "Vous avez reçu une nouvelle commande #{$order->order_number} d'un montant de " . number_format($total, 2) . " €. Consultez vos commandes pour plus de détails.",
-                    'success',
-                    'shopping-bag',
-                    url('/merchant/orders'),
-                    'Voir mes commandes',
-                    true // Envoyer email
-                );
-            }
+                // Préparer le détail de la facture pour l'email
+                $orderItems = $order->orderItems()->with('product')->get();
+                $factureDetails = "Détail de la commande :\n";
+                foreach ($orderItems as $item) {
+                    $factureDetails .= "- " . $item->product->name . " x " . $item->quantity . " = " . number_format($item->total, 2) . " €\n";
+                }
+                $factureDetails .= "\nMontant total : " . number_format($total, 2) . " €";
+
+                // Notifier le commerçant de la nouvelle commande avec facture
+                if ($merchantId) {
+                    NotificationService::sendToUser(
+                        $merchantId,
+                        'Nouvelle commande reçue',
+                        "Vous avez reçu une nouvelle commande #{$order->order_number}.\n" . $factureDetails . "\nConsultez vos commandes pour plus de détails.",
+                        'success',
+                        'shopping-bag',
+                        url('/merchant/orders'),
+                        'Voir mes commandes',
+                        true // Envoyer email
+                    );
+                }
 
             // Vider le panier
             Cart::where('user_id', Auth::id())->delete();
