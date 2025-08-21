@@ -37,11 +37,15 @@
                 <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
                     {{ __('Forgot your password?') }}
                 </a>
+                <!-- Traduction -->
+                <span class="ml-2 text-sm text-gray-600">Se souvenir de moi</span>
             @endif
 
             <x-primary-button class="ml-3">
                 {{ __('Log in') }}
-            </x-primary-button>
+                            Mot de passe oublié ?
         </div>
     </form>
 </x-guest-layout>
+
+                        Se connecter
