@@ -89,7 +89,16 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
+        $images = $product->images;
+        if (is_array($images)) {
+            foreach ($images as $img) {
+                $imgPath = public_path($img);
+                if (file_exists($imgPath)) {
+                    @unlink($imgPath);
+                }
+            }
+        }
         $product->delete();
-        return redirect()->route('admin.products.index')->with('success', 'Produit supprimé avec succès!');
+        return redirect()->route('admin.products.index')->with('success', 'Produit supprimé avec succès et images nettoyées!');
     }
 }

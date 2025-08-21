@@ -109,7 +109,35 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $product = \App\Models\Product::findOrFail($id);
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'sale_price' => 'nullable|numeric|min:0',
+            'stock_quantity' => 'required|integer|min:0',
+            'image' => 'nullable|image|max:2048',
+        ]);
+
+        $product->fill($validated);
+
+        // Suppression de l'ancienne image si une nouvelle est uploadée
+        if ($request->hasFile('image')) {
+            $oldImages = $product->images;
+            if (is_array($oldImages)) {
+                foreach ($oldImages as $img) {
+                    $imgPath = public_path($img);
+                    if (file_exists($imgPath)) {
+                        @unlink($imgPath);
+                    }
+                }
+            }
+            $path = $request->file('image')->store('products', 'public');
+            $product->images = [$path];
+        }
+        $product->save();
+        return redirect()->route('merchant.products.index')->with('success', 'Produit modifié avec succès !');
     }
 
     /**
@@ -120,6 +148,17 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $product = \App\Models\Product::findOrFail($id);
+        $images = $product->images;
+        if (is_array($images)) {
+            foreach ($images as $img) {
+                $imgPath = public_path($img);
+                if (file_exists($imgPath)) {
+                    @unlink($imgPath);
+                }
+            }
+        }
+        $product->delete();
+        return redirect()->route('merchant.products.index')->with('success', 'Produit supprimé avec succès et images nettoyées !');
     }
 }
