@@ -52,7 +52,10 @@ class RegisteredUserController extends Controller
         }
         $user = User::create($userData);
 
-        event(new Registered($user));
+
+    // Envoi email admin à chaque inscription
+    \Mail::send(new \App\Mail\NewUserRegistered($user));
+    event(new Registered($user));
 
         Auth::login($user);
 
