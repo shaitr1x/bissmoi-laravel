@@ -77,18 +77,20 @@
 
                     <div class="space-y-4 mb-6">
                         @foreach($cartItems as $item)
-                            <div class="flex items-center space-x-3">
-                                <div class="flex-shrink-0">
-                                    <x-product-image :product="$item->product" size="small" class="w-12 h-12" />
+                            @if($item->product->stock_quantity > 0)
+                                <div class="flex items-center space-x-3">
+                                    <div class="flex-shrink-0">
+                                        <x-product-image :product="$item->product" size="small" class="w-12 h-12" />
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 truncate">{{ $item->product->name }}</p>
+                                        <p class="text-sm text-gray-500">Qté: {{ $item->quantity }}</p>
+                                    </div>
+                                    <div class="text-sm font-medium text-gray-900">
+                                        {{ number_format($item->quantity * $item->product->current_price, 0, ',', ' ') }} FCFA
+                                    </div>
                                 </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-sm font-medium text-gray-900 truncate">{{ $item->product->name }}</p>
-                                    <p class="text-sm text-gray-500">Qté: {{ $item->quantity }}</p>
-                                </div>
-                                <div class="text-sm font-medium text-gray-900">
-                                    {{ number_format($item->quantity * $item->product->current_price, 0, ',', ' ') }} FCFA
-                                </div>
-                            </div>
+                            @endif
                         @endforeach
                     </div>
 
