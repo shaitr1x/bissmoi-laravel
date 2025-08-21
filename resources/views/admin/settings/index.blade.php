@@ -115,6 +115,27 @@
                     </div>
 
                     <!-- Nettoyer le cache -->
+                        <!-- Télécharger le sitemap -->
+                        <div class="border rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center">
+                                    <div class="p-2 bg-blue-100 rounded-lg">
+                                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v16h16V4H4zm4 8h8m-4-4v8" />
+                                        </svg>
+                                    </div>
+                                    <div class="ml-3">
+                                        <h4 class="text-sm font-medium text-gray-900">Sitemap Google</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-600 mb-3">
+                                Téléchargez le fichier sitemap.xml à soumettre à Google Search Console.
+                            </p>
+                            <a href="{{ url('/sitemap.xml') }}" target="_blank" class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest bg-blue-600 hover:bg-blue-700">
+                                Télécharger le sitemap
+                            </a>
+                        </div>
                     <div class="border rounded-lg p-4">
                         <div class="flex items-center justify-between mb-3">
                             <div class="flex items-center">
