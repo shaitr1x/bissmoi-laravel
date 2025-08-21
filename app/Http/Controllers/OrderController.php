@@ -98,6 +98,10 @@ class OrderController extends Controller
             return $item->quantity * $item->product->current_price;
         });
 
+        // Ajouter le montant de la livraison (3000 FCFA)
+        $shipping_fee = 3000;
+        $total += $shipping_fee;
+
         return view('orders.checkout', compact('cartItems', 'total'));
     }
 
@@ -169,6 +173,10 @@ class OrderController extends Controller
 
                 $total += $itemTotal;
             }
+
+            // Ajouter le montant de la livraison (3000 FCFA)
+            $shipping_fee = 3000;
+            $total += $shipping_fee;
 
             // Mettre à jour le total de la commande
             $order->update(['total_amount' => $total]);

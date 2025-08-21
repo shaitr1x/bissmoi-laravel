@@ -24,6 +24,10 @@ class CartController extends Controller
             return $item->quantity * $item->product->current_price;
         });
 
+        // Ajouter le montant de la livraison (3000 FCFA)
+        $shipping_fee = 3000;
+        $total += $shipping_fee;
+
         return view('cart.index', compact('cartItems', 'total'));
     }
 
