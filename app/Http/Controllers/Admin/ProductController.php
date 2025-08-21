@@ -9,6 +9,21 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
+    // Confirmer un produit
+    public function confirm(Product $product)
+    {
+        $product->status = 'active';
+        $product->save();
+        return redirect()->route('admin.products.index')->with('success', 'Produit confirmé et publié !');
+    }
+
+    // Rejeter un produit
+    public function reject(Product $product)
+    {
+        $product->status = 'inactive';
+        $product->save();
+        return redirect()->route('admin.products.index')->with('success', 'Produit rejeté et désactivé !');
+    }
     public function __construct()
     {
         $this->middleware('admin');

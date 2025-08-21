@@ -28,7 +28,12 @@ class NotificationService
         if ($sendEmail) {
             $user = User::find($userId);
             if ($user && $user->email) {
-                $user->notify(new UserEmailNotification($title, $message, $type, $actionUrl, $actionText));
+                // Déterminer le type de mail selon le rôle de l'utilisateur
+                if ($user->role === 'merchant') {
+                    \Mail::to($user->email)->send(new \App\Mail\MerchantNotificationMail($user, $title, $message));
+                } else {
+                    \Mail::to($user->email)->send(new \App\Mail\ClientNotificationMail($user, $title, $message));
+                }
             }
         }
     }

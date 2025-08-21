@@ -137,6 +137,16 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
+            {{-- Bannière pré-lancement pour commerçants et clients connectés --}}
+            @auth
+                @php
+                    $user = auth()->user();
+                    $isMerchant = method_exists($user, 'isMerchant') ? $user->isMerchant() : ($user->role ?? null) === 'merchant';
+                    $isClient = method_exists($user, 'isClient') ? $user->isClient() : ($user->role ?? null) === 'client';
+                    $now = \Carbon\Carbon::now();
+                    $prelaunchEnd = \Carbon\Carbon::create(2025, 8, 30, 0, 0, 0);
+                @endphp
+            @endauth
             @include('layouts.navigation')
 
             <!-- Page Heading -->

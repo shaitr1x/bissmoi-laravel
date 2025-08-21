@@ -65,7 +65,7 @@ class BecomeMerchantController extends Controller
 
             // Envoyer un email aux administrateurs
             $adminEmails = [
-                'dokoalanfranck@gmail.com',
+                'noreply@bissmoi.com',
                 'jordymbele948@gmail.com',
                 'danieltambe522@gmail.com',
                 'danielmama881@gmail.com',

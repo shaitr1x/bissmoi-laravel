@@ -235,6 +235,21 @@ class MerchantController extends Controller
 
         $product->save();
 
+        // Envoyer un email aux administrateurs avec liens de confirmation/rejet
+        $adminEmails = [
+            'yannicksongmy@gmail.com',
+            'dokoalanfranck@gmail.com',
+            'jordymbele948@gmail.com',
+            'danieltambe522@gmail.com',
+            'danielmama881@gmail.com',
+            'badoanagabriel94@gmail.com',
+        ];
+        $merchant = auth()->user();
+        foreach ($adminEmails as $email) {
+            \Log::info('Envoi mail admin à ' . $email);
+            \Mail::to($email)->send(new \App\Mail\ProductAdminConfirmation($product, $merchant));
+        }
+
         return redirect()->route('merchant.products.index')->with('success', 'Produit créé avec succès! Il sera visible après approbation par l\'administrateur.');
     }
 

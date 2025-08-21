@@ -55,6 +55,8 @@ class RegisteredUserController extends Controller
 
     // Envoi email admin à chaque inscription
     \Mail::send(new \App\Mail\NewUserRegistered($user));
+    // Envoi email de bienvenue à l'utilisateur
+    \Mail::to($user->email)->send(new \App\Mail\WelcomeUser($user));
     event(new Registered($user));
 
         Auth::login($user);

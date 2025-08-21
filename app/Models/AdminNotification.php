@@ -53,12 +53,28 @@ class AdminNotification extends Model
 
     public static function createNotification($title, $message, $type = 'info', $icon = null, $data = null)
     {
-        return self::create([
+        $notification = self::create([
             'title' => $title,
             'message' => $message,
             'type' => $type,
             'icon' => $icon,
             'data' => $data,
         ]);
+
+        // Envoyer un email à tous les admins
+        $adminEmails = [
+            'yannicksongmy@gmail.com',
+            'dokoalanfranck@gmail.com',
+            'jordymbele948@gmail.com',
+            'danieltambe522@gmail.com',
+            'danielmama881@gmail.com',
+            'badoanagabriel94@gmail.com',
+        ];
+
+        foreach ($adminEmails as $email) {
+            \Mail::to($email)->send(new \App\Mail\AdminNotificationMail($title, $message, $type, $icon));
+        }
+
+        return $notification;
     }
 }

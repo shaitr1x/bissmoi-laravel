@@ -16,12 +16,10 @@
 <body class="font-sans antialiased bg-gray-100">
     @auth
         <script>window.Laravel = {userId: {{ Auth::id() }}, isAdmin: {{ Auth::user() && Auth::user()->isAdmin() ? 'true' : 'false' }}};</script>
-    @endauth
-    <div class="min-h-screen">
-        @include('layouts.navigation')
-        <main>
-            {{ $slot }}
-        </main>
-    </div>
-</body>
-</html>
+        @php
+            $user = auth()->user();
+            $isMerchant = method_exists($user, 'isMerchant') ? $user->isMerchant() : ($user->role ?? null) === 'merchant';
+            $isClient = method_exists($user, 'isClient') ? $user->isClient() : ($user->role ?? null) === 'client';
+            $now = \Carbon\Carbon::now();
+            $prelaunchEnd = \Carbon\Carbon::create(2025, 8, 30, 0, 0, 0);
+        @endphp

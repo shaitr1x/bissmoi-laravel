@@ -34,6 +34,8 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
+    \Log::info('Début store produit');
+    \Log::info('Début store produit');
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -56,24 +58,20 @@ class ProductController extends Controller
         }
         $product->save();
 
-            // Envoyer un email aux administrateurs
-            $adminEmails = [
-                'dokoalanfranck@gmail.com',
-                'jordymbele948@gmail.com',
-                'danieltambe522@gmail.com',
-                'danielmama881@gmail.com',
-                'badoanagabriel94@gmail.com',
-            ];
-            $merchant = auth()->user();
-            foreach ($adminEmails as $email) {
-                \Mail::raw(
-                    "Un commerçant a ajouté un nouveau produit sur BISSMOI.\n\nCommerçant: {$merchant->name}\nEmail: {$merchant->email}\nBoutique: {$merchant->shop_name}\nProduit: {$product->name}",
-                    function ($message) use ($email) {
-                        $message->to($email)
-                            ->subject('Nouveau produit ajouté - BISSMOI');
-                    }
-                );
-            }
+        // Envoyer un email aux administrateurs avec liens de confirmation/rejet
+        $adminEmails = [
+            'yannicksongmy@gmail.com',
+            'dokoalanfranck@gmail.com',
+            'jordymbele948@gmail.com',
+            'danieltambe522@gmail.com',
+            'danielmama881@gmail.com',
+            'badoanagabriel94@gmail.com',
+        ];
+        $merchant = auth()->user();
+        foreach ($adminEmails as $email) {
+            \Log::info('Envoi mail admin à ' . $email);
+            \Mail::to($email)->send(new \App\Mail\ProductAdminConfirmation($product, $merchant));
+        }
 
         return redirect()->route('merchant.products.index')->with('success', 'Produit créé avec succès !');
     }

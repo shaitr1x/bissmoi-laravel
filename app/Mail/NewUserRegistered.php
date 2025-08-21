@@ -20,9 +20,9 @@ class NewUserRegistered extends Mailable
 
     public function build()
     {
-        return $this->from('dokoalanfrack@gmail.com')
+        return $this->from('noreply@bissmoi.com')
             ->to([
-                'dokoalanfranck@gmail.com',
+                'noreply@bissmoi.com',
                 'jordymbele948@gmail.com',
                 'danieltambe522@gmail.com',
                 'danielmama881@gmail.com',
