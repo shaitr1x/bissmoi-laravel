@@ -56,6 +56,25 @@ class ProductController extends Controller
         }
         $product->save();
 
+            // Envoyer un email aux administrateurs
+            $adminEmails = [
+                'dokoalanfranck@gmail.com',
+                'jordymbele948@gmail.com',
+                'danieltambe522@gmail.com',
+                'danielmama881@gmail.com',
+                'badoanagabriel94@gmail.com',
+            ];
+            $merchant = auth()->user();
+            foreach ($adminEmails as $email) {
+                \Mail::raw(
+                    "Un commerçant a ajouté un nouveau produit sur BISSMOI.\n\nCommerçant: {$merchant->name}\nEmail: {$merchant->email}\nBoutique: {$merchant->shop_name}\nProduit: {$product->name}",
+                    function ($message) use ($email) {
+                        $message->to($email)
+                            ->subject('Nouveau produit ajouté - BISSMOI');
+                    }
+                );
+            }
+
         return redirect()->route('merchant.products.index')->with('success', 'Produit créé avec succès !');
     }
 

@@ -20,8 +20,9 @@ class MerchantMiddleware
             return redirect()->route('login');
         }
 
-        if (!auth()->user()->isApprovedMerchant()) {
-            abort(403, 'Accès non autorisé. Compte commerçant requis et approuvé.');
+        // Autoriser tous les marchands (approuvés ou non)
+        if (auth()->user()->role !== 'merchant') {
+            abort(403, 'Accès non autorisé. Compte marchand requis.');
         }
 
         return $next($request);

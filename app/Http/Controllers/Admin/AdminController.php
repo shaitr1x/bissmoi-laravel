@@ -29,8 +29,9 @@ class AdminController extends Controller
     // Afficher les demandes de vérification des marchands
     public function merchantVerificationRequests()
     {
-        $requests = MerchantVerificationRequest::with('user')->orderByDesc('created_at')->get();
-        return view('admin.merchant_verification_requests', compact('requests'));
+    \Log::info('DEBUG: Appel de merchantVerificationRequests, nb demandes = ' . MerchantVerificationRequest::count());
+    $requests = MerchantVerificationRequest::with('user')->orderByDesc('created_at')->get();
+    return view('admin.merchant_verification_requests', compact('requests'));
     }
 
     // Approuver une demande de vérification
@@ -175,6 +176,15 @@ class AdminController extends Controller
             'success',
             'check-circle'
         );
+
+            // Envoyer un email au commerçant
+            \Mail::raw(
+                "Bonjour {$merchant->name},\n\nVotre demande pour devenir commerçant sur BISSMOI a été approuvée ! Vous pouvez maintenant accéder à votre espace marchand et ajouter vos produits.\n\nL'équipe BISSMOI",
+                function ($message) use ($merchant) {
+                    $message->to($merchant->email)
+                        ->subject('Votre demande commerçant a été approuvée - BISSMOI');
+                }
+            );
 
         return back()->with('success', 'Commerçant approuvé avec succès!');
     }

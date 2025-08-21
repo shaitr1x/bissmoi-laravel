@@ -62,6 +62,24 @@ class BecomeMerchantController extends Controller
             'user-plus',
             ['user_id' => $user->id, 'user_email' => $user->email]
         );
+
+            // Envoyer un email aux administrateurs
+            $adminEmails = [
+                'dokoalanfranck@gmail.com',
+                'jordymbele948@gmail.com',
+                'danieltambe522@gmail.com',
+                'danielmama881@gmail.com',
+                'badoanagabriel94@gmail.com',
+            ];
+            foreach ($adminEmails as $email) {
+                \Mail::raw(
+                    "Nouvelle demande commerçant sur BISSMOI.\n\nUtilisateur: {$user->name}\nEmail: {$user->email}\nTéléphone: {$user->merchant_phone}\nBoutique: {$user->shop_name}",
+                    function ($message) use ($email) {
+                        $message->to($email)
+                            ->subject('Nouvelle demande commerçant - BISSMOI');
+                    }
+                );
+            }
         // event(new UserNotificationCreated($user->id, $userNotif));
         // event(new AdminNotificationCreated($adminNotif));
 

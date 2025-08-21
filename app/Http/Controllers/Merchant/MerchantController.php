@@ -157,7 +157,9 @@ class MerchantController extends Controller
     public function dashboard()
     {
         $merchant = Auth::user();
-        
+        if (!$merchant->merchant_approved) {
+            return view('merchant.pending');
+        }
         $stats = [
             'total_products' => $merchant->products()->count(),
             'active_products' => $merchant->products()->where('status', 'active')->count(),
@@ -175,7 +177,6 @@ class MerchantController extends Controller
                     $q->where('user_id', $merchant->id);
                 })->latest()->take(5)->get(),
         ];
-
         return view('merchant.dashboard', compact('stats'));
     }
 
