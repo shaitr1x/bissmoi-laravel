@@ -413,7 +413,9 @@
                     </div>
                 @endif
 
-                @if (isset($slot))
+                @if(View::hasSection('slot'))
+                    @yield('slot')
+                @elseif (isset($slot))
                     {{ $slot }}
                 @else
                     @yield('content')
