@@ -39,6 +39,11 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Admin\SitemapController;
+use App\Http\Controllers\Admin\EmailingController;
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin/emailing', [EmailingController::class, 'index'])->name('admin.emailing');
+    Route::post('/admin/emailing/send', [EmailingController::class, 'send'])->name('admin.emailing.send');
+});
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap.xml');
 use App\Http\Controllers\OrderController;
