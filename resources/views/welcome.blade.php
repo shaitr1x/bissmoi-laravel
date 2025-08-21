@@ -167,7 +167,7 @@
                         </div>
                     </div>
                     <h3 class="text-xl font-semibold mb-2">Livraison rapide</h3>
-                    <p class="text-gray-600">Livraison 3000 FCFA et rapide partout avec suivi en temps réel.</p>
+                    <p class="text-gray-600">Livraison 3000 FCFA par sécurisé.</p>
                 </div>
             </div>
         </div>
