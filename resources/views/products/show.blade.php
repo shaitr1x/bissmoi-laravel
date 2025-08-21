@@ -92,6 +92,11 @@
                                         </span>
                                     @endif
                                 </span>
+                                <span>•</span>
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1 text-gray-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a6 6 0 016 6c0 4.418-6 10-6 10S4 12.418 4 8a6 6 0 016-6zm0 8a2 2 0 100-4 2 2 0 000 4z"/></svg>
+                                    <span>Ville : {{ $product->user->city ?? 'Non renseignée' }}</span>
+                                </span>
                             </div>
                         </div>
 
