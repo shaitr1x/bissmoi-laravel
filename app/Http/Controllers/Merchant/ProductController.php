@@ -34,8 +34,7 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    \Log::info('Début store produit');
-    \Log::info('Début store produit');
+    // ...existing code...
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
