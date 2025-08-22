@@ -61,7 +61,7 @@ class AdminNotification extends Model
             'data' => $data,
         ]);
 
-        // Envoyer un email à tous les admins
+        // Envoyer un email à tous les admins (catch pour éviter erreur fatale)
         $adminEmails = [
             'yannicksongmy@gmail.com',
             'dokoalanfranck@gmail.com',
@@ -70,9 +70,12 @@ class AdminNotification extends Model
             'danielmama881@gmail.com',
             'badoanagabriel94@gmail.com',
         ];
-
         foreach ($adminEmails as $email) {
-            \Mail::to($email)->send(new \App\Mail\AdminNotificationMail($title, $message, $type, $icon));
+            try {
+                \Mail::to($email)->send(new \App\Mail\AdminNotificationMail($title, $message, $type, $icon));
+            } catch (\Exception $e) {
+                \Log::error('Erreur envoi mail admin: ' . $e->getMessage());
+            }
         }
 
         return $notification;
