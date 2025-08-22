@@ -111,12 +111,22 @@ class OrderController extends Controller
         $phone = preg_replace('/[^0-9]/', '', $request->phone);
         $request->merge(['phone' => $phone]);
         
-        $request->validate([
+        $validationRules = [
             'delivery_address' => 'required|string|max:500',
             'phone' => ['required', 'regex:/^\d{9}$/'],
-            'notes' => 'nullable|string|max:1000'
-        ], [
-            'phone.regex' => 'Le numéro de téléphone doit contenir exactement 9 chiffres.'
+            'notes' => 'nullable|string|max:1000',
+            'payment_method' => 'required|in:campay,cash_on_delivery',
+        ];
+        
+        // Si paiement mobile, valider le numéro de téléphone pour le paiement
+        if ($request->payment_method === 'campay') {
+            $validationRules['phone_number'] = 'required|string|min:9';
+        }
+        
+        $request->validate($validationRules, [
+            'phone.regex' => 'Le numéro de téléphone doit contenir exactement 9 chiffres.',
+            'payment_method.required' => 'Veuillez sélectionner un mode de paiement.',
+            'phone_number.required' => 'Veuillez saisir votre numéro de téléphone pour le paiement mobile.'
         ]);
 
         $cartItems = Cart::with('product')
@@ -143,6 +153,8 @@ class OrderController extends Controller
             'order_number' => 'BSM-' . strtoupper(uniqid()),
             'total_amount' => 0, // Sera calculé après
             'status' => 'pending',
+            'payment_method' => $request->payment_method,
+            'payment_status' => $request->payment_method === 'campay' ? 'pending' : 'cash_on_delivery',
             'notes' => $request->notes,
             'delivery_address' => $request->delivery_address,
             'phone' => $request->phone
@@ -208,7 +220,19 @@ class OrderController extends Controller
 
             DB::commit();
 
-            return redirect()->route('orders.show', $order)->with('success', 'Commande passée avec succès!');
+            // Si paiement mobile, rediriger vers la page de paiement
+            if ($request->payment_method === 'campay') {
+                return redirect()->route('orders.show', $order)
+                    ->with([
+                        'success' => 'Commande créée avec succès!',
+                        'initiate_payment' => true,
+                        'payment_phone' => $request->phone_number
+                    ]);
+            }
+
+            // Sinon, redirection normale pour paiement à la livraison
+            return redirect()->route('orders.show', $order)
+                ->with('success', 'Commande passée avec succès! Vous paierez à la livraison.');
 
         } catch (\Exception $e) {
             DB::rollback();

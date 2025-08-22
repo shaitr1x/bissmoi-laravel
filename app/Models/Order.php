@@ -26,6 +26,7 @@ class Order extends Model
         'billing_address',
         'shipping_address',
         'payment_method',
+        'payment_reference',
         'payment_status',
         'notes',
         'delivery_address',

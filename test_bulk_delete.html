@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Suppression Groupée</title>
+</head>
+<body>
+    <h1>Test de suppression groupée</h1>
+    
+    <form action="http://localhost:8000/admin/notifications/delete-multiple" method="POST">
+        <input type="hidden" name="_token" value="test-token">
+        <input type="checkbox" name="notifications[]" value="1" checked> Notification 1<br>
+        <input type="checkbox" name="notifications[]" value="2" checked> Notification 2<br>
+        <input type="checkbox" name="notifications[]" value="3" checked> Notification 3<br>
+        <button type="submit">Supprimer la sélection</button>
+    </form>
+    
+    <script>
+        console.log('Test form loaded');
+        document.querySelector('form').addEventListener('submit', function(e) {
+            console.log('Form submitted');
+            console.log('Action:', this.action);
+            console.log('Method:', this.method);
+        });
+    </script>
+</body>
+</html>
