@@ -102,7 +102,8 @@ class OrderController extends Controller
     $shipping_fee = \App\Http\Controllers\Admin\ShippingSettingsController::getGlobalShippingFee();
     $total += $shipping_fee;
 
-    return view('orders.checkout', compact('cartItems', 'total', 'shipping_fee'));
+    $mobilePaymentEnabled = \App\Http\Controllers\Admin\PaymentSettingsController::isMobilePaymentEnabled();
+    return view('orders.checkout', compact('cartItems', 'total', 'shipping_fee', 'mobilePaymentEnabled'));
     }
 
     public function store(Request $request)

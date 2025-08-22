@@ -51,6 +51,7 @@
                             
                             <!-- Option 1: Paiement mobile -->
                             <div class="space-y-4">
+                                @if($mobilePaymentEnabled)
                                 <label class="flex items-start space-x-3 cursor-pointer">
                                     <input type="radio" name="payment_method" value="campay" class="mt-1" checked>
                                     <div class="flex-1">
@@ -62,7 +63,7 @@
                                             </div>
                                         </div>
                                         <p class="text-sm text-gray-500 mt-1">Payez directement avec MTN Mobile Money ou Orange Money</p>
-                                        
+                        
                                         <!-- Champ numéro de téléphone -->
                                         <div class="mt-3" id="phone-field">
                                             <input type="tel" 
@@ -74,7 +75,7 @@
                                         </div>
                                     </div>
                                 </label>
-                                
+                                @endif
                                 <!-- Option 2: Paiement à la livraison -->
                                 <label class="flex items-start space-x-3 cursor-pointer">
                                     <input type="radio" name="payment_method" value="cash_on_delivery" class="mt-1">

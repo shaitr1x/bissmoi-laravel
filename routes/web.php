@@ -157,6 +157,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/users', [AdminController::class, 'users'])->name('users.index');
     Route::get('/users/{user}', [AdminController::class, 'showUser'])->name('users.show');
     Route::patch('/users/{user}/toggle-status', [AdminController::class, 'toggleUserStatus'])->name('users.toggle-status');
+
+    // Paramètres paiement mobile
+    Route::get('/settings/payment', [\App\Http\Controllers\Admin\PaymentSettingsController::class, 'index'])->name('settings.payment');
+    Route::put('/settings/payment', [\App\Http\Controllers\Admin\PaymentSettingsController::class, 'update'])->name('settings.payment.update');
     
     // Paramètres des frais de livraison
     Route::get('/settings/shipping', [\App\Http\Controllers\Admin\ShippingSettingsController::class, 'index'])->name('settings.shipping');

@@ -202,6 +202,16 @@
                                     <p class="text-sm text-gray-600">Configurer les frais de livraison du site</p>
                                 </div>
                             </a>
+
+                            <a href="{{ route('admin.settings.payment') }}" class="flex items-center p-4 bg-pink-50 hover:bg-pink-100 rounded-lg transition">
+                                <svg class="w-8 h-8 text-pink-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a5 5 0 00-10 0v2M5 9h14M5 9v10a2 2 0 002 2h10a2 2 0 002-2V9"></path>
+                                </svg>
+                                <div>
+                                    <p class="font-medium">Paiement Mobile</p>
+                                    <p class="text-sm text-gray-600">Activer/désactiver MTN & Orange</p>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>
