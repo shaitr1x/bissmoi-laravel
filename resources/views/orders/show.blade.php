@@ -197,11 +197,50 @@
                                 <!-- Mode de paiement -->
                                 <div class="bg-gray-50 p-4 rounded-lg">
                                     <h3 class="text-lg font-semibold text-gray-900 mb-3">Paiement</h3>
-                                    <div class="flex items-center text-sm text-gray-700">
-                                        <svg class="h-5 w-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                        </svg>
-                                        <span>Paiement à la livraison (espèces)</span>
+                                    <div class="space-y-2">
+                                        @if($order->payment_method === 'campay')
+                                            <div class="flex items-center text-sm text-gray-700">
+                                                <svg class="h-5 w-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                                </svg>
+                                                <span>Paiement mobile (Campay)</span>
+                                            </div>
+                                            <div class="flex items-center text-sm">
+                                                @switch($order->payment_status)
+                                                    @case('pending')
+                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 8 8">
+                                                                <circle cx="4" cy="4" r="3"/>
+                                                            </svg>
+                                                            En attente de paiement
+                                                        </span>
+                                                        @break
+                                                    @case('completed')
+                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 8 8">
+                                                                <circle cx="4" cy="4" r="3"/>
+                                                            </svg>
+                                                            Paiement confirmé
+                                                        </span>
+                                                        @break
+                                                    @case('failed')
+                                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 8 8">
+                                                                <circle cx="4" cy="4" r="3"/>
+                                                            </svg>
+                                                            Paiement échoué
+                                                        </span>
+                                                        @break
+                                                @endswitch
+                                            </div>
+                                        @else
+                                            <div class="flex items-center text-sm text-gray-700">
+                                                <svg class="h-5 w-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                                </svg>
+                                                <span>Paiement à la livraison (espèces)</span>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
@@ -211,23 +250,38 @@
 
                 <!-- Actions -->
                 <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
-                    <div class="flex justify-between">
+                    <div class="flex justify-between items-center">
                         <a href="{{ route('orders.index') }}" 
                            class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-md hover:bg-gray-50 transition duration-150">
                             ← Retour à mes commandes
                         </a>
                         
-                        @if($order->status === 'delivered')
-                            <div class="space-x-2">
+                        <div class="space-x-2">
+                            @if($order->payment_method === 'campay' && $order->payment_status === 'pending')
+                                <button type="button" 
+                                        onclick="openCampayModal()"
+                                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition duration-150">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                    </svg>
+                                    Payer maintenant
+                                </button>
+                            @endif
+                            
+                            @if($order->status === 'delivered')
                                 <a href="{{ route('products.index') }}" 
-                                   class="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 transition duration-150">
+                                   class="inline-flex items-center px-4 py-2 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 transition duration-150">
                                     Commander à nouveau
                                 </a>
-                            </div>
-                        @endif
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    @if($order->payment_method === 'campay')
+        @include('orders.partials.campay-payment-modal')
+    @endif
 </x-app-layout>

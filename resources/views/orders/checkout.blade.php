@@ -46,17 +46,68 @@
                         </div>
 
                         <!-- Mode de paiement -->
-                        <div class="mt-6 p-4 bg-yellow-50 rounded-lg">
-                            <div class="flex items-start">
-                                <svg class="h-5 w-5 text-yellow-600 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <div class="text-sm text-yellow-800">
-                                    <p class="font-medium mb-1">Mode de paiement</p>
-                                    <p>Paiement à la livraison (espèces uniquement)</p>
-                                </div>
+                        <div class="mt-6 p-4 bg-gray-50 rounded-lg">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Mode de paiement</h3>
+                            
+                            <!-- Option 1: Paiement mobile -->
+                            <div class="space-y-4">
+                                <label class="flex items-start space-x-3 cursor-pointer">
+                                    <input type="radio" name="payment_method" value="campay" class="mt-1" checked>
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2">
+                                            <div class="text-sm font-medium text-gray-900">Paiement mobile</div>
+                                            <div class="flex space-x-1">
+                                                <span class="px-2 py-1 text-xs bg-orange-100 text-orange-800 rounded">MTN</span>
+                                                <span class="px-2 py-1 text-xs bg-orange-100 text-orange-800 rounded">Orange</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-sm text-gray-500 mt-1">Payez directement avec MTN Mobile Money ou Orange Money</p>
+                                        
+                                        <!-- Champ numéro de téléphone -->
+                                        <div class="mt-3" id="phone-field">
+                                            <input type="tel" 
+                                                   name="phone_number" 
+                                                   placeholder="Ex: 237670123456 ou 670123456" 
+                                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                                   required>
+                                            <p class="text-xs text-gray-500 mt-1">Numéro de téléphone pour le paiement mobile</p>
+                                        </div>
+                                    </div>
+                                </label>
+                                
+                                <!-- Option 2: Paiement à la livraison -->
+                                <label class="flex items-start space-x-3 cursor-pointer">
+                                    <input type="radio" name="payment_method" value="cash_on_delivery" class="mt-1">
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2">
+                                            <svg class="h-5 w-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                            </svg>
+                                            <div class="text-sm font-medium text-gray-900">Paiement à la livraison</div>
+                                        </div>
+                                        <p class="text-sm text-gray-500 mt-1">Paiement en espèces à la réception</p>
+                                    </div>
+                                </label>
                             </div>
                         </div>
+
+                        <script>
+                            // Gestion de l'affichage du champ téléphone
+                            document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+                                radio.addEventListener('change', function() {
+                                    const phoneField = document.getElementById('phone-field');
+                                    const phoneInput = phoneField.querySelector('input');
+                                    
+                                    if (this.value === 'campay') {
+                                        phoneField.style.display = 'block';
+                                        phoneInput.required = true;
+                                    } else {
+                                        phoneField.style.display = 'none';
+                                        phoneInput.required = false;
+                                    }
+                                });
+                            });
+                        </script>
 
                         <div class="mt-6 flex space-x-4">
                             <a href="{{ route('cart.index') }}" 

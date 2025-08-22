@@ -31,4 +31,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'campay' => [
+        'api_url' => env('CAMPAY_API_URL', 'https://www.campay.net/api'),
+        'app_id' => env('CAMPAY_APP_ID'),
+        'app_secret' => env('CAMPAY_APP_SECRET'),
+        'username' => env('CAMPAY_APP_USERNAME'),
+        'password' => env('CAMPAY_APP_PASSWORD'),
+        'environment' => env('CAMPAY_ENVIRONMENT', 'sandbox'),
+    ],
+
 ];

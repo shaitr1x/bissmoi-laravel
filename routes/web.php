@@ -1,4 +1,13 @@
 <?php
+use App\Http\Controllers\CampayController;
+
+// Routes Campay (paiement mobile)
+Route::middleware('auth')->group(function () {
+    Route::post('/campay/initiate', [CampayController::class, 'initiatePayment'])->name('campay.initiate');
+    Route::post('/campay/check-status', [CampayController::class, 'checkPaymentStatus'])->name('campay.check.status');
+});
+Route::post('/campay/webhook', [CampayController::class, 'webhook'])->name('campay.webhook');
+
 // Marquer une notification comme lue (client)
 Route::middleware('auth')->patch('/mes-notifications/{notification}/read', function ($notificationId) {
     $notification = \App\Models\UserNotification::where('id', $notificationId)
