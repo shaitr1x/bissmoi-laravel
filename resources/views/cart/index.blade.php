@@ -109,7 +109,7 @@
                                 </div>
                                 <div class="flex justify-between text-sm">
                                     <span class="text-gray-600">Livraison:</span>
-                                    <span class="font-medium text-blue-600">3000 FCFA</span>
+                                    <span class="font-medium text-blue-600">{{ number_format($shipping_fee, 0, ',', ' ') }} FCFA</span>
                                 </div>
                                 <div class="border-t pt-3">
                                     <div class="flex justify-between">
@@ -131,7 +131,7 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
                                     <div class="text-sm text-blue-800">
-                                        <p class="font-medium mb-1">Livraison 3000 FCFA</p>
+                                        <p class="font-medium mb-1">Livraison {{ number_format($shipping_fee, 0, ',', ' ') }} FCFA</p>
                                         <p>Délai estimé: 2-5 jours ouvrés</p>
                                     </div>
                                 </div>

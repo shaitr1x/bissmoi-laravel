@@ -192,6 +192,16 @@
                                     <p class="text-sm text-gray-600">Gérer les remerciements & fondateurs</p>
                                 </div>
                             </a>
+
+                            <a href="{{ route('admin.settings.shipping') }}" class="flex items-center p-4 bg-indigo-50 hover:bg-indigo-100 rounded-lg transition">
+                                <svg class="w-8 h-8 text-indigo-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"></path>
+                                </svg>
+                                <div>
+                                    <p class="font-medium">Frais de Livraison</p>
+                                    <p class="text-sm text-gray-600">Configurer les frais de livraison du site</p>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>

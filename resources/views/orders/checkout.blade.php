@@ -152,7 +152,7 @@
                         </div>
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-600">Livraison:</span>
-                            <span class="font-medium text-blue-600">3000 FCFA</span>
+                            <span class="font-medium text-blue-600">{{ number_format($shipping_fee, 0, ',', ' ') }} FCFA</span>
                         </div>
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-600">TVA:</span>
@@ -175,7 +175,7 @@
                             <div class="text-sm text-blue-800">
                                 <p class="font-medium mb-1">Informations de livraison</p>
                                 <ul class="space-y-1">
-                                    <li>• Livraison 3000 FCFA</li>
+                                    <li>• Livraison {{ number_format($shipping_fee, 0, ',', ' ') }} FCFA</li>
                                     <li>• Délai: 2-5 jours ouvrés</li>
                                     <li>• Paiement à la livraison</li>
                                     <li>• Suivi par SMS</li>

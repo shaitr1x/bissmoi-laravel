@@ -158,6 +158,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/users/{user}', [AdminController::class, 'showUser'])->name('users.show');
     Route::patch('/users/{user}/toggle-status', [AdminController::class, 'toggleUserStatus'])->name('users.toggle-status');
     
+    // Paramètres des frais de livraison
+    Route::get('/settings/shipping', [\App\Http\Controllers\Admin\ShippingSettingsController::class, 'index'])->name('settings.shipping');
+    Route::put('/settings/shipping', [\App\Http\Controllers\Admin\ShippingSettingsController::class, 'update'])->name('settings.shipping.update');
+    
     // Gestion des commandes
     Route::get('/orders', [AdminController::class, 'orders'])->name('orders.index');
     Route::get('/orders/{order}', [AdminController::class, 'showOrder'])->name('orders.show');

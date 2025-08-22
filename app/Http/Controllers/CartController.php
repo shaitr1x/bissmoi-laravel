@@ -24,11 +24,11 @@ class CartController extends Controller
             return $item->quantity * $item->product->current_price;
         });
 
-        // Ajouter le montant de la livraison (3000 FCFA)
-        $shipping_fee = 3000;
-        $total += $shipping_fee;
+    // Ajouter le montant de la livraison dynamique
+    $shipping_fee = \App\Http\Controllers\Admin\ShippingSettingsController::getGlobalShippingFee();
+    $total += $shipping_fee;
 
-        return view('cart.index', compact('cartItems', 'total'));
+    return view('cart.index', compact('cartItems', 'total', 'shipping_fee'));
     }
 
     public function store(Request $request)
