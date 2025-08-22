@@ -7,7 +7,7 @@
 <body>
     <h2>Bonjour {{ $merchant->name }},</h2>
     <h3>{{ $title }}</h3>
-    <p>{{ $message }}</p>
+        <p>{{ is_string($message) ? $message : (method_exists($message, '__toString') ? (string)$message : '') }}</p>
     <p>Vous pouvez accéder à votre espace marchand pour plus de détails.</p>
     <p>— L'équipe Bissmoi</p>
 </body>
