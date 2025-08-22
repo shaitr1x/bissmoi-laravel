@@ -236,3 +236,4 @@ Route::middleware('auth')->get('/notifications/recent', function () {
 });
 
 require __DIR__.'/auth.php';
+require __DIR__.'/admin_notifications.php';
