@@ -43,7 +43,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-red-50 rounded-lg p-4">
                     <div class="flex items-center">
                         <div class="p-2 bg-red-500 rounded-lg">
@@ -57,7 +56,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-green-50 rounded-lg p-4">
                     <div class="flex items-center">
                         <div class="p-2 bg-green-500 rounded-lg">
@@ -71,7 +69,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="bg-yellow-50 rounded-lg p-4">
                     <div class="flex items-center">
                         <div class="p-2 bg-yellow-500 rounded-lg">
@@ -87,12 +84,29 @@
                 </div>
             </div>
 
+            <!-- Formulaire de suppression groupée (en dehors de la liste) -->
+            <form id="bulkDeleteForm" action="{{ route('admin.notifications.deleteMultiple') }}" method="POST" onsubmit="return confirmAndDebug(event)">
+                @csrf
+            </form>
+
+            <!-- Contrôles de suppression groupée -->
+            <div class="mb-4 flex items-center space-x-4">
+                <button type="submit" form="bulkDeleteForm" class="px-4 py-2 bg-red-600 text-white rounded font-semibold text-xs uppercase tracking-widest hover:bg-red-700" id="bulkDeleteBtn" disabled>
+                    Supprimer la sélection
+                </button>
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="selectAllCheckbox" class="form-checkbox h-4 w-4 text-blue-600">
+                    <span class="ml-2 text-sm text-gray-700">Tout sélectionner</span>
+                </label>
+            </div>
+
             <!-- Liste des notifications -->
             <div class="space-y-4">
                 @forelse($notifications as $notification)
                     <div class="border rounded-lg p-4 {{ $notification->is_read ? 'bg-gray-50' : 'bg-white border-l-4 border-l-blue-500' }}">
-                        <div class="flex items-start justify-between">
-                            <div class="flex items-start space-x-3">
+                        <div class="flex items-start space-x-3">
+                            <input type="checkbox" name="notifications[]" value="{{ $notification->id }}" class="mt-1 bulk-checkbox" form="bulkDeleteForm" onchange="updateBulkDeleteBtn()">
+                                
                                 <!-- Icône du type de notification -->
                                 <div class="flex-shrink-0">
                                     @if($notification->type === 'success')
@@ -141,70 +155,38 @@
                                         @endif
                                     </div>
                                 </div>
-                            </div>
 
-                            <!-- Actions -->
-                            <div class="flex items-center space-x-2 ml-4">
-                                @if(!$notification->is_read)
-                                    <form action="{{ route('admin.notifications.read', $notification) }}" method="POST" class="notif-read-form">
+                                <!-- Actions -->
+                                <div class="flex items-center space-x-2">
+                                    @if(!$notification->is_read)
+                                        <form action="{{ route('admin.notifications.read', $notification) }}" method="POST" class="notif-read-form">
+                                            @csrf
+                                            @method('PATCH')
+                                            <button type="submit" 
+                                                    class="text-blue-600 hover:text-blue-900 text-sm font-medium"
+                                                    title="Marquer comme lu">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    @endif
+                                    
+                                    <form action="{{ route('admin.notifications.delete', $notification) }}" method="POST" 
+                                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette notification ?')">
                                         @csrf
-                                        @method('PATCH')
+                                        @method('DELETE')
                                         <button type="submit" 
-                                                class="text-blue-600 hover:text-blue-900 text-sm font-medium"
-                                                title="Marquer comme lu">
+                                                class="text-red-600 hover:text-red-900 text-sm font-medium"
+                                                title="Supprimer">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                             </svg>
                                         </button>
                                     </form>
-                                @endif
-    <script>
-    // Retire le badge et le compteur après marquage comme lu sans rechargement
-    document.querySelectorAll('.notif-read-form').forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const notifCard = form.closest('.border');
-            fetch(form.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': form.querySelector('[name=_token]').value,
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
-                body: new URLSearchParams(new FormData(form))
-            }).then(resp => {
-                if (resp.ok) {
-                    notifCard.classList.add('bg-gray-50');
-                    notifCard.classList.remove('bg-white', 'border-l-4', 'border-l-blue-500');
-                    const badge = notifCard.querySelector('.notif-new-badge');
-                    if (badge) badge.remove();
-                    form.remove();
-                    // Mettre à jour le compteur si présent
-                    const notifCount = document.querySelector('.bg-red-50 .text-lg.font-semibold.text-red-600');
-                    if (notifCount) {
-                        let count = parseInt(notifCount.textContent.trim());
-                        if (!isNaN(count) && count > 0) notifCount.textContent = count - 1;
-                    }
-                }
-            });
-        });
-    });
-    </script>
-                                
-                                <form action="{{ route('admin.notifications.delete', $notification) }}" method="POST" 
-                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette notification ?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" 
-                                            class="text-red-600 hover:text-red-900 text-sm font-medium"
-                                            title="Supprimer">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                        </svg>
-                                    </button>
-                                </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
                 @empty
                     <div class="text-center py-12">
                         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -225,5 +207,68 @@
         </div>
     </div>
 
-    {{-- JS supprimé, plus nécessaire --}}
+        <script>
+        // Debug function pour la suppression groupée
+        function confirmAndDebug(event) {
+            const form = event.target;
+            const checkedBoxes = document.querySelectorAll('.bulk-checkbox:checked');
+            console.log('Form action:', form.action);
+            console.log('Form method:', form.method);
+            console.log('Checked boxes:', checkedBoxes.length);
+            console.log('Form data:', new FormData(form));
+            
+            if (checkedBoxes.length === 0) {
+                alert('Aucune notification sélectionnée.');
+                return false;
+            }
+            
+            return confirm('Supprimer les notifications sélectionnées ?');
+        }
+        
+        // Gestion du bouton de suppression groupée
+        function updateBulkDeleteBtn() {
+            const checked = document.querySelectorAll('.bulk-checkbox:checked').length;
+            document.getElementById('bulkDeleteBtn').disabled = checked === 0;
+            document.getElementById('selectAllCheckbox').checked = checked === document.querySelectorAll('.bulk-checkbox').length;
+        }
+        document.querySelectorAll('.bulk-checkbox').forEach(cb => {
+            cb.addEventListener('change', updateBulkDeleteBtn);
+        });
+        document.getElementById('selectAllCheckbox').addEventListener('change', function() {
+            const checked = this.checked;
+            document.querySelectorAll('.bulk-checkbox').forEach(cb => {
+                cb.checked = checked;
+            });
+            updateBulkDeleteBtn();
+        });
+        // Retire le badge et le compteur après marquage comme lu sans rechargement
+        document.querySelectorAll('.notif-read-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const notifCard = form.closest('.border');
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': form.querySelector('[name=_token]').value,
+                        'X-Requested-With': 'XMLHttpRequest',
+                    },
+                    body: new URLSearchParams(new FormData(form))
+                }).then(resp => {
+                    if (resp.ok) {
+                        notifCard.classList.add('bg-gray-50');
+                        notifCard.classList.remove('bg-white', 'border-l-4', 'border-l-blue-500');
+                        const badge = notifCard.querySelector('.notif-new-badge');
+                        if (badge) badge.remove();
+                        form.remove();
+                        // Mettre à jour le compteur si présent
+                        const notifCount = document.querySelector('.bg-red-50 .text-lg.font-semibold.text-red-600');
+                        if (notifCount) {
+                            let count = parseInt(notifCount.textContent.trim());
+                            if (!isNaN(count) && count > 0) notifCount.textContent = count - 1;
+                        }
+                    }
+                });
+            });
+        });
+        </script>
 </x-admin-layout>

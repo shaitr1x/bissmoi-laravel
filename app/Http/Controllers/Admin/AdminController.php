@@ -16,6 +16,24 @@ use Carbon\Carbon;
 class AdminController extends Controller
 {
     /**
+     * Suppression groupée des notifications admin
+     */
+    public function deleteMultipleNotifications(Request $request)
+    {
+        \Log::info('deleteMultipleNotifications called', [
+            'method' => $request->method(),
+            'url' => $request->url(),
+            'data' => $request->all()
+        ]);
+        
+        $ids = $request->input('notifications', []);
+        if (!empty($ids)) {
+            AdminNotification::whereIn('id', $ids)->delete();
+            return back()->with('success', 'Notifications supprimées avec succès !');
+        }
+        return back()->with('error', 'Aucune notification sélectionnée.');
+    }
+    /**
      * Marquer toutes les notifications admin comme lues
      */
     public function markAllNotificationsAsRead()
