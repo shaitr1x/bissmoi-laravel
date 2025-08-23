@@ -17,26 +17,7 @@
                     <div class="border rounded-lg p-4">
                         <div class="flex items-center mb-3">
                             <div class="p-2 bg-indigo-100 rounded-lg">
-                                <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                            </div>
-                            <div class="ml-3">
-                                <h4 class="text-sm font-medium text-gray-900">Choix du rôle à l'inscription</h4>
-                            </div>
-                        </div>
-                        <p class="text-sm text-gray-600 mb-3">
-                            Permettre aux nouveaux inscrits de choisir leur rôle (client, commerçant ou admin) lors de l'inscription.
-                        </p>
-                        <form action="{{ route('admin.settings.role-signup') }}" method="POST">
-                            @csrf
-                            <label class="inline-flex items-center">
-                                <input type="checkbox" name="role_signup_enabled" value="1" {{ $settings['role_signup_enabled'] ? 'checked' : '' }} class="form-checkbox h-5 w-5 text-indigo-600">
-                                <span class="ml-2 text-gray-700">Activer le choix du rôle à l'inscription</span>
-                            </label>
-                            <button type="submit" class="ml-4 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-xs font-semibold">Enregistrer</button>
-                        </form>
-                    </div>
+                    <!-- Bloc Choix du rôle à l'inscription supprimé -->
         <!-- Actions système -->
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="px-6 py-4 border-b border-gray-200">

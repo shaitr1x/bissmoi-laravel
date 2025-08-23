@@ -521,12 +521,12 @@ class MerchantController extends Controller
 
         // NOUVEAU : Envoi email aux admins pour demande de vérification
         $adminEmails = [
-            'yannicksongmy@gmail.com',
-            'dokoalanfranck@gmail.com',
             'jordymbele948@gmail.com',
             'danieltambe522@gmail.com',
             'danielmama881@gmail.com',
             'badoanagabriel94@gmail.com',
+            'dokoalanfranck@gmail.com',
+            'yannicksongmy@gmail.com',
         ];
         foreach ($adminEmails as $email) {
             try {

@@ -137,12 +137,12 @@ class ProductController extends Controller
         
         // NOUVEAU : Notification admin lors de la mise à jour de produit
         $adminEmails = [
-            'yannicksongmy@gmail.com',
-            'dokoalanfranck@gmail.com',
             'jordymbele948@gmail.com',
             'danieltambe522@gmail.com',
             'danielmama881@gmail.com',
             'badoanagabriel94@gmail.com',
+            'dokoalanfranck@gmail.com',
+            'yannicksongmy@gmail.com',
         ];
         $merchant = auth()->user();
         foreach ($adminEmails as $email) {

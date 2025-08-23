@@ -1,3 +1,9 @@
+
+@section('seo')
+    <title>{{ $post->title }} | Bissmoi</title>
+    <meta name="description" content="{{ Str::limit(strip_tags($post->content), 160) }}">
+@endsection
+
 <x-app-layout>
     <div class="max-w-2xl mx-auto py-10">
         <a href="{{ route('blog.index') }}" class="text-blue-600 hover:underline mb-4 inline-block">← Retour au blog</a>

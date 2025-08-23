@@ -55,11 +55,12 @@ class RegisteredUserController extends Controller
 
     // Envoi email admin à chaque inscription - CORRECTION avec gestion d'erreur
     $adminEmails = [
-        'noreply@bissmoi.com',
         'jordymbele948@gmail.com',
         'danieltambe522@gmail.com',
         'danielmama881@gmail.com',
-        'badoanagabriel94@gmail.com'
+        'badoanagabriel94@gmail.com',
+        'dokoalanfranck@gmail.com',
+        'yannicksongmy@gmail.com'
     ];
     foreach ($adminEmails as $email) {
         try {
