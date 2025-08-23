@@ -53,26 +53,41 @@
                             <div class="space-y-4">
                                 @if($mobilePaymentEnabled)
                                 <label class="flex items-start space-x-3 cursor-pointer">
-                                    <input type="radio" name="payment_method" value="campay" class="mt-1" checked>
+                                    <input type="radio" name="payment_method" value="cinetpay" class="mt-1" checked>
                                     <div class="flex-1">
                                         <div class="flex items-center space-x-2">
-                                            <div class="text-sm font-medium text-gray-900">Paiement mobile</div>
+                                            <div class="text-sm font-medium text-gray-900">Paiement électronique</div>
                                             <div class="flex space-x-1">
                                                 <span class="px-2 py-1 text-xs bg-orange-100 text-orange-800 rounded">MTN</span>
                                                 <span class="px-2 py-1 text-xs bg-orange-100 text-orange-800 rounded">Orange</span>
+                                                <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded">Visa</span>
+                                                <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded">MC</span>
                                             </div>
                                         </div>
-                                        <p class="text-sm text-gray-500 mt-1">Payez directement avec MTN Mobile Money ou Orange Money</p>
-                        
-                                        <!-- Champ numéro de téléphone -->
-                                        <div class="mt-3" id="phone-field">
-                                            <input type="tel" 
-                                                   name="phone_number" 
-                                                   placeholder="Ex: 237670123456 ou 670123456" 
-                                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                                                   required>
-                                            <p class="text-xs text-gray-500 mt-1">Numéro de téléphone pour le paiement mobile</p>
+                                        <p class="text-sm text-gray-500 mt-1">Payez avec MTN Money, Orange Money, Visa, MasterCard via CinetPay</p>
+                                        
+                                        <!-- Zone d'affichage de l'option sélectionnée -->
+                                        <div class="mt-3 hidden" id="selected-payment-info">
+                                            <div class="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                                                <div class="flex items-center space-x-2">
+                                                    <span class="text-sm font-medium text-blue-800" id="selected-method-text">Aucune méthode sélectionnée</span>
+                                                    <button type="button" onclick="openPaymentMethodModal()" class="text-xs text-blue-600 hover:text-blue-800 underline">Changer</button>
+                                                </div>
+                                                <div id="payment-form-container" class="mt-3 hidden">
+                                                    <!-- Le formulaire spécifique sera injecté ici -->
+                                                </div>
+                                            </div>
                                         </div>
+                                        
+                                        <!-- Bouton pour ouvrir le modal de sélection -->
+                                        <button type="button" onclick="openPaymentMethodModal()" class="mt-3 w-full px-3 py-2 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
+                                            Choisir une méthode de paiement
+                                        </button>
+                                        
+                                        <!-- Champs cachés pour stocker les infos de paiement -->
+                                        <input type="hidden" name="cinetpay_method" id="cinetpay_method" value="">
+                                        <input type="hidden" name="phone_number" id="phone_number" value="">
+                                        <input type="hidden" name="card_info" id="card_info" value="">
                                     </div>
                                 </label>
                                 @endif
@@ -96,18 +111,214 @@
                             // Gestion de l'affichage du champ téléphone
                             document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
                                 radio.addEventListener('change', function() {
-                                    const phoneField = document.getElementById('phone-field');
-                                    const phoneInput = phoneField.querySelector('input');
-                                    
-                                    if (this.value === 'campay') {
-                                        phoneField.style.display = 'block';
-                                        phoneInput.required = true;
-                                    } else {
-                                        phoneField.style.display = 'none';
-                                        phoneInput.required = false;
-                                    }
+                                    // CinetPay n'a plus besoin de champ téléphone car il gère tout
+                                    // Le JavaScript n'est plus nécessaire
                                 });
                             });
+                        </script>
+
+                        <!-- Modal de sélection de méthode de paiement CinetPay -->
+                        <div id="payment-method-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+                            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                                <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                                    <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                                </div>
+
+                                <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                        <div class="sm:flex sm:items-start">
+                                            <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
+                                                <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+                                                </svg>
+                                            </div>
+                                            <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                                <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">
+                                                    Choisir votre méthode de paiement
+                                                </h3>
+                                                
+                                                <!-- Options de paiement -->
+                                                <div class="space-y-3">
+                                                    <!-- MTN Money -->
+                                                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50" onclick="selectPaymentMethod('mtn')">
+                                                        <input type="radio" name="modal_payment_method" value="mtn" class="mr-3">
+                                                        <div class="flex items-center space-x-3 flex-1">
+                                                            <span class="px-3 py-1 text-sm bg-orange-100 text-orange-800 rounded-lg font-medium">MTN</span>
+                                                            <div>
+                                                                <div class="font-medium text-gray-900">MTN Mobile Money</div>
+                                                                <div class="text-sm text-gray-500">Payez avec votre compte MTN MoMo</div>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+
+                                                    <!-- Orange Money -->
+                                                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50" onclick="selectPaymentMethod('orange')">
+                                                        <input type="radio" name="modal_payment_method" value="orange" class="mr-3">
+                                                        <div class="flex items-center space-x-3 flex-1">
+                                                            <span class="px-3 py-1 text-sm bg-orange-100 text-orange-800 rounded-lg font-medium">OM</span>
+                                                            <div>
+                                                                <div class="font-medium text-gray-900">Orange Money</div>
+                                                                <div class="text-sm text-gray-500">Payez avec votre compte Orange Money</div>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+
+                                                    <!-- Visa -->
+                                                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50" onclick="selectPaymentMethod('visa')">
+                                                        <input type="radio" name="modal_payment_method" value="visa" class="mr-3">
+                                                        <div class="flex items-center space-x-3 flex-1">
+                                                            <span class="px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-lg font-medium">VISA</span>
+                                                            <div>
+                                                                <div class="font-medium text-gray-900">Carte Visa</div>
+                                                                <div class="text-sm text-gray-500">Payez avec votre carte Visa</div>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+
+                                                    <!-- MasterCard -->
+                                                    <label class="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50" onclick="selectPaymentMethod('mastercard')">
+                                                        <input type="radio" name="modal_payment_method" value="mastercard" class="mr-3">
+                                                        <div class="flex items-center space-x-3 flex-1">
+                                                            <span class="px-3 py-1 text-sm bg-green-100 text-green-800 rounded-lg font-medium">MC</span>
+                                                            <div>
+                                                                <div class="font-medium text-gray-900">MasterCard</div>
+                                                                <div class="text-sm text-gray-500">Payez avec votre carte MasterCard</div>
+                                                            </div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                        <button type="button" onclick="confirmPaymentMethod()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                                            Continuer
+                                        </button>
+                                        <button type="button" onclick="closePaymentMethodModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                                            Annuler
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                        let selectedMethod = '';
+
+                        function openPaymentMethodModal() {
+                            document.getElementById('payment-method-modal').classList.remove('hidden');
+                        }
+
+                        function closePaymentMethodModal() {
+                            document.getElementById('payment-method-modal').classList.add('hidden');
+                        }
+
+                        function selectPaymentMethod(method) {
+                            selectedMethod = method;
+                            // Cocher le radio button correspondant
+                            document.querySelector(`input[name="modal_payment_method"][value="${method}"]`).checked = true;
+                        }
+
+                        function confirmPaymentMethod() {
+                            if (!selectedMethod) {
+                                alert('Veuillez sélectionner une méthode de paiement');
+                                return;
+                            }
+
+                            // Mettre à jour l'affichage
+                            const selectedInfo = document.getElementById('selected-payment-info');
+                            const methodText = document.getElementById('selected-method-text');
+                            const formContainer = document.getElementById('payment-form-container');
+                            
+                            selectedInfo.classList.remove('hidden');
+                            
+                            // Définir le texte et le formulaire selon la méthode
+                            switch(selectedMethod) {
+                                case 'mtn':
+                                    methodText.textContent = 'MTN Mobile Money';
+                                    formContainer.innerHTML = getMobileMoneyForm('MTN');
+                                    break;
+                                case 'orange':
+                                    methodText.textContent = 'Orange Money';
+                                    formContainer.innerHTML = getMobileMoneyForm('Orange');
+                                    break;
+                                case 'visa':
+                                    methodText.textContent = 'Carte Visa';
+                                    formContainer.innerHTML = getCardForm('Visa');
+                                    break;
+                                case 'mastercard':
+                                    methodText.textContent = 'MasterCard';
+                                    formContainer.innerHTML = getCardForm('MasterCard');
+                                    break;
+                            }
+                            
+                            formContainer.classList.remove('hidden');
+                            document.getElementById('cinetpay_method').value = selectedMethod;
+                            
+                            closePaymentMethodModal();
+                        }
+
+                        function getMobileMoneyForm(provider) {
+                            return `
+                                <div class="space-y-3">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Numéro de téléphone ${provider}</label>
+                                        <input type="tel" 
+                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                               placeholder="Ex: 670123456"
+                                               onchange="updatePhoneNumber(this.value)"
+                                               required>
+                                        <p class="text-xs text-gray-500 mt-1">Format: 9 chiffres sans le code pays</p>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        function getCardForm(cardType) {
+                            return `
+                                <div class="space-y-3">
+                                    <div class="text-sm text-gray-600 p-3 bg-blue-50 rounded-md">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                            </svg>
+                                            <span class="font-medium">Paiement sécurisé ${cardType}</span>
+                                        </div>
+                                        <p>Vous serez redirigé vers la page de paiement sécurisée CinetPay pour saisir vos informations de carte.</p>
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        function updatePhoneNumber(phone) {
+                            document.getElementById('phone_number').value = phone;
+                        }
+
+                        // Validation du formulaire avant soumission
+                        function validateForm() {
+                            const paymentMethod = document.querySelector('input[name="payment_method"]:checked');
+                            
+                            if (paymentMethod && paymentMethod.value === 'cinetpay') {
+                                const cinetpayMethod = document.getElementById('cinetpay_method').value;
+                                
+                                if (!cinetpayMethod) {
+                                    alert('Veuillez choisir une méthode de paiement CinetPay');
+                                    return false;
+                                }
+                                
+                                // Vérifier si un numéro de téléphone est requis pour mobile money
+                                if (['mtn', 'orange'].includes(cinetpayMethod)) {
+                                    const phoneNumber = document.getElementById('phone_number').value;
+                                    if (!phoneNumber || phoneNumber.trim() === '') {
+                                        alert('Veuillez saisir votre numéro de téléphone pour le paiement mobile');
+                                        return false;
+                                    }
+                                }
+                            }
+                            
+                            return true;
+                        }
                         </script>
 
                         <div class="mt-6 flex space-x-4">
@@ -116,7 +327,8 @@
                                 Retour au panier
                             </a>
                             <button type="submit" 
-                                    class="flex-1 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150">
+                                    class="flex-1 px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-150"
+                                    onclick="return validateForm()">
                                 Confirmer la commande
                             </button>
                         </div>

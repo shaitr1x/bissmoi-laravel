@@ -31,13 +31,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    'campay' => [
-        'api_url' => env('CAMPAY_API_URL', 'https://www.campay.net/api'),
-        'app_id' => env('CAMPAY_APP_ID'),
-        'app_secret' => env('CAMPAY_APP_SECRET'),
-        'username' => env('CAMPAY_APP_USERNAME'),
-        'password' => env('CAMPAY_APP_PASSWORD'),
-        'environment' => env('CAMPAY_ENVIRONMENT', 'sandbox'),
+    'cinetpay' => [
+        'api_url' => env('CINETPAY_API_URL', 'https://api-checkout.cinetpay.com/v2'),
+        'apikey' => env('CINETPAY_APIKEY'),
+        'site_id' => env('CINETPAY_SITE_ID'),
+        'environment' => env('CINETPAY_ENVIRONMENT', 'sandbox'),
     ],
 
 ];

@@ -116,17 +116,22 @@ class OrderController extends Controller
             'delivery_address' => 'required|string|max:500',
             'phone' => ['required', 'regex:/^\d{9}$/'],
             'notes' => 'nullable|string|max:1000',
-            'payment_method' => 'required|in:campay,cash_on_delivery',
+            'payment_method' => 'required|in:cinetpay,cash_on_delivery',
         ];
         
-        // Si paiement mobile, valider le numéro de téléphone pour le paiement
-        if ($request->payment_method === 'campay') {
-            $validationRules['phone_number'] = 'required|string|min:9';
+        // Si paiement CinetPay, valider les champs supplémentaires
+        if ($request->payment_method === 'cinetpay') {
+            $validationRules['cinetpay_method'] = 'required|in:mtn,orange,visa,mastercard';
+            // Pour mobile money, le téléphone est requis
+            if (in_array($request->cinetpay_method, ['mtn', 'orange'])) {
+                $validationRules['phone_number'] = 'required|string|min:9';
+            }
         }
         
         $request->validate($validationRules, [
             'phone.regex' => 'Le numéro de téléphone doit contenir exactement 9 chiffres.',
             'payment_method.required' => 'Veuillez sélectionner un mode de paiement.',
+            'cinetpay_method.required' => 'Veuillez choisir une méthode de paiement CinetPay.',
             'phone_number.required' => 'Veuillez saisir votre numéro de téléphone pour le paiement mobile.'
         ]);
 
@@ -148,18 +153,28 @@ class OrderController extends Controller
             $merchantId = $cartItems[0]->product->user_id;
         }
 
-        $order = Order::create([
+        $orderData = [
             'user_id' => Auth::id(),
             'merchant_id' => $merchantId,
             'order_number' => 'BSM-' . strtoupper(uniqid()),
             'total_amount' => 0, // Sera calculé après
             'status' => 'pending',
             'payment_method' => $request->payment_method,
-            'payment_status' => $request->payment_method === 'campay' ? 'pending' : 'cash_on_delivery',
+            'payment_status' => $request->payment_method === 'cinetpay' ? 'pending' : 'cash_on_delivery',
             'notes' => $request->notes,
             'delivery_address' => $request->delivery_address,
             'phone' => $request->phone
-        ]);
+        ];
+
+        // Ajouter les infos CinetPay si applicable
+        if ($request->payment_method === 'cinetpay') {
+            $orderData['payment_details'] = json_encode([
+                'cinetpay_method' => $request->cinetpay_method,
+                'phone_number' => $request->phone_number,
+            ]);
+        }
+
+        $order = Order::create($orderData);
 
             $total = 0;
 
@@ -221,12 +236,13 @@ class OrderController extends Controller
 
             DB::commit();
 
-            // Si paiement mobile, rediriger vers la page de paiement
-            if ($request->payment_method === 'campay') {
+            // Si paiement électronique, rediriger vers la page de paiement
+            if ($request->payment_method === 'cinetpay') {
                 return redirect()->route('orders.show', $order)
                     ->with([
                         'success' => 'Commande créée avec succès!',
                         'initiate_payment' => true,
+                        'cinetpay_method' => $request->cinetpay_method,
                         'payment_phone' => $request->phone_number
                     ]);
             }

@@ -21,13 +21,6 @@ class NewUserRegistered extends Mailable
     public function build()
     {
         return $this->from('noreply@bissmoi.com')
-            ->to([
-                'noreply@bissmoi.com',
-                'jordymbele948@gmail.com',
-                'danieltambe522@gmail.com',
-                'danielmama881@gmail.com',
-                'badoanagabriel94@gmail.com'
-            ])
             ->subject('Nouvel utilisateur inscrit sur Bissmoi')
             ->view('emails.new_user_registered');
     }

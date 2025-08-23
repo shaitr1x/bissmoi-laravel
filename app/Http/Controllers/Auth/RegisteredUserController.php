@@ -53,10 +53,31 @@ class RegisteredUserController extends Controller
         $user = User::create($userData);
 
 
-    // Envoi email admin à chaque inscription
-    \Mail::send(new \App\Mail\NewUserRegistered($user));
+    // Envoi email admin à chaque inscription - CORRECTION avec gestion d'erreur
+    $adminEmails = [
+        'noreply@bissmoi.com',
+        'jordymbele948@gmail.com',
+        'danieltambe522@gmail.com',
+        'danielmama881@gmail.com',
+        'badoanagabriel94@gmail.com'
+    ];
+    foreach ($adminEmails as $email) {
+        try {
+            \Mail::to($email)->send(new \App\Mail\NewUserRegistered($user));
+            \Log::info("Email inscription admin envoyé à : {$email}");
+        } catch (\Exception $e) {
+            \Log::error("Erreur envoi email admin inscription à {$email}: " . $e->getMessage());
+        }
+    }
+    
     // Envoi email de bienvenue à l'utilisateur
-    \Mail::to($user->email)->send(new \App\Mail\WelcomeUser($user));
+    try {
+        \Mail::to($user->email)->send(new \App\Mail\WelcomeUser($user));
+        \Log::info("Email bienvenue envoyé à : {$user->email}");
+    } catch (\Exception $e) {
+        \Log::error("Erreur envoi email bienvenue à {$user->email}: " . $e->getMessage());
+    }
+    
     event(new Registered($user));
 
         Auth::login($user);

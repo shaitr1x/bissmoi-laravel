@@ -519,6 +519,29 @@ class MerchantController extends Controller
             'badge-check'
         );
 
+        // NOUVEAU : Envoi email aux admins pour demande de vérification
+        $adminEmails = [
+            'yannicksongmy@gmail.com',
+            'dokoalanfranck@gmail.com',
+            'jordymbele948@gmail.com',
+            'danieltambe522@gmail.com',
+            'danielmama881@gmail.com',
+            'badoanagabriel94@gmail.com',
+        ];
+        foreach ($adminEmails as $email) {
+            try {
+                \Mail::raw(
+                    "Demande de vérification de commerçant sur BISSMOI.\n\nCommerçant: {$merchant->name}\nEmail: {$merchant->email}\nBoutique: {$merchant->shop_name}\n\nLe commerçant demande à obtenir le badge de vérification. Veuillez examiner sa demande dans l'administration.",
+                    function ($message) use ($email) {
+                        $message->to($email)->subject('Demande de vérification commerçant - BISSMOI');
+                    }
+                );
+                \Log::info('Email demande vérification envoyé à ' . $email);
+            } catch (\Exception $e) {
+                \Log::error('Erreur envoi email demande vérification à ' . $email . ': ' . $e->getMessage());
+            }
+        }
+
         return back()->with('success', 'Votre demande de vérification a bien été envoyée à l\'administration.');
     }
 }

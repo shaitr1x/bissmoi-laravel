@@ -1,12 +1,13 @@
 <?php
-use App\Http\Controllers\CampayController;
+use App\Http\Controllers\CinetPayController;
 
-// Routes Campay (paiement mobile)
+// Routes CinetPay (paiement mobile)
 Route::middleware('auth')->group(function () {
-    Route::post('/campay/initiate', [CampayController::class, 'initiatePayment'])->name('campay.initiate');
-    Route::post('/campay/check-status', [CampayController::class, 'checkPaymentStatus'])->name('campay.check.status');
+    Route::post('/cinetpay/initiate', [CinetPayController::class, 'initiatePayment'])->name('cinetpay.initiate');
+    Route::post('/cinetpay/check-status', [CinetPayController::class, 'checkPaymentStatus'])->name('cinetpay.check.status');
 });
-Route::post('/campay/webhook', [CampayController::class, 'webhook'])->name('campay.webhook');
+Route::post('/cinetpay/webhook', [CinetPayController::class, 'paymentNotify'])->name('cinetpay.notify');
+Route::get('/cinetpay/return', [CinetPayController::class, 'paymentReturn'])->name('cinetpay.return');
 
 // Marquer une notification comme lue (client)
 Route::middleware('auth')->patch('/mes-notifications/{notification}/read', function ($notificationId) {

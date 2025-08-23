@@ -134,6 +134,31 @@ class ProductController extends Controller
             $product->images = [$path];
         }
         $product->save();
+        
+        // NOUVEAU : Notification admin lors de la mise à jour de produit
+        $adminEmails = [
+            'yannicksongmy@gmail.com',
+            'dokoalanfranck@gmail.com',
+            'jordymbele948@gmail.com',
+            'danieltambe522@gmail.com',
+            'danielmama881@gmail.com',
+            'badoanagabriel94@gmail.com',
+        ];
+        $merchant = auth()->user();
+        foreach ($adminEmails as $email) {
+            try {
+                \Mail::raw(
+                    "Mise à jour de produit sur BISSMOI.\n\nCommerçant: {$merchant->name}\nEmail: {$merchant->email}\nBoutique: {$merchant->shop_name}\nProduit: {$product->name}\nNouveau prix: {$product->price} FCFA\n\nLe produit a été mis à jour et nécessite peut-être une nouvelle validation.",
+                    function ($message) use ($email) {
+                        $message->to($email)->subject('Mise à jour produit - BISSMOI');
+                    }
+                );
+                \Log::info('Email mise à jour produit envoyé à ' . $email);
+            } catch (\Exception $e) {
+                \Log::error('Erreur envoi email mise à jour produit à ' . $email . ': ' . $e->getMessage());
+            }
+        }
+        
         return redirect()->route('merchant.products.index')->with('success', 'Produit modifié avec succès !');
     }
 
